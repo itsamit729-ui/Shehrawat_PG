@@ -1,0 +1,1155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aangan Living · Managed PGs in Gurugram</title>
+<meta name="description" content="Fully managed PGs and coliving in Gurugram near Cyber City, Golf Course Road, Sohna Road and Udyog Vihar. Single, double and triple sharing with food, WiFi and housekeeping. Zero brokerage.">
+<meta property="og:title" content="Aangan Living · Managed PGs in Gurugram">
+<meta property="og:description" content="Move in this week. Single, double and triple sharing rooms with meals, WiFi and housekeeping included.">
+<meta property="og:image" content="assets/img/hero-lounge.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f4d3a'/%3E%3Cpath d='M8 15l8-7 8 7v9h-5v-6h-6v6H8z' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+/* Aangan Living — shared design system
+   Font: Manrope. Icons: Phosphor. Spacing & radius follow a fixed scale. */
+
+:root {
+  --ink: #111614;
+  --ink-2: #4a524e;
+  --ink-3: #7c8480;
+  --line: #e3e6e3;
+  --line-2: #d3d8d4;
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --surface-2: #f3f2ed;
+  --brand: #1f4d3a;
+  --brand-2: #2c6a50;
+  --brand-soft: #e5efe9;
+  --accent: #e07b2c;
+  --accent-soft: #fdf0e4;
+  --good: #0c8a3e;
+  --good-soft: #e3f4e9;
+  --warn: #b7791f;
+  --warn-soft: #fdf3dc;
+  --bad: #c43b3b;
+  --bad-soft: #fbe7e6;
+  --info: #2a78d6;
+  --info-soft: #e5effb;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --shadow-sm: 0 1px 2px rgba(17, 22, 20, 0.06);
+  --shadow: 0 8px 24px rgba(17, 22, 20, 0.08);
+  --shadow-lg: 0 24px 64px rgba(17, 22, 20, 0.14);
+  --container: 1200px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+h1, h2, h3, h4 { text-wrap: balance; font-weight: 700; letter-spacing: -0.02em; }
+p { text-wrap: pretty; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+.skip-link {
+  position: absolute; left: 16px; top: -64px; z-index: 200;
+  background: var(--ink); color: #fff; padding: 8px 12px; border-radius: 8px;
+  transition: top 0.4s var(--ease);
+}
+.skip-link:focus { top: 16px; }
+
+.container { width: 100%; max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .container { padding: 0 16px; } }
+
+/* ---------- Type ---------- */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--brand-2);
+}
+.h-display { font-size: 60px; line-height: 1; }
+.h1 { font-size: 48px; line-height: 1; }
+.h2 { font-size: 36px; line-height: 40px; }
+.h3 { font-size: 24px; line-height: 32px; }
+.h4 { font-size: 18px; line-height: 28px; }
+.lead { font-size: 18px; line-height: 28px; color: var(--ink-2); }
+.muted { color: var(--ink-3); }
+.small { font-size: 14px; line-height: 20px; }
+.xs { font-size: 12px; line-height: 16px; }
+.grad-text {
+  background: linear-gradient(90deg, #000000, #666666);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+@media (max-width: 900px) {
+  .h-display { font-size: 48px; }
+  .h1 { font-size: 36px; line-height: 40px; }
+  .h2 { font-size: 30px; line-height: 36px; }
+}
+@media (max-width: 560px) {
+  .h-display { font-size: 36px; line-height: 40px; }
+  .h1 { font-size: 30px; line-height: 36px; }
+  .h2 { font-size: 24px; line-height: 32px; }
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 8px 12px; min-height: 40px; border-radius: 12px; border: 1px solid transparent; background: transparent;
+  font-size: 16px; line-height: 24px; font-weight: 600; cursor: pointer; white-space: nowrap;
+  transition: transform 0.5s var(--ease), background-color 0.5s var(--ease), box-shadow 0.5s var(--ease), border-color 0.5s var(--ease);
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: scale(0.98); }
+.btn-lg { padding: 12px 24px; min-height: 48px; }
+.btn-sm { font-size: 14px; line-height: 20px; min-height: 36px; padding: 8px 12px; border-radius: 8px; }
+.btn-primary { background: var(--brand); color: #fff; }
+.btn-primary:hover { background: var(--brand-2); box-shadow: var(--shadow); }
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover { background: #c96a1f; box-shadow: var(--shadow); }
+.btn-ghost { background: var(--surface); border-color: var(--line-2); color: var(--ink); }
+.btn-ghost:hover { border-color: var(--ink-3); background: var(--surface-2); }
+.btn-dark { background: var(--ink); color: #fff; }
+.btn-dark:hover { background: #2a312e; }
+.btn-white { background: #fff; color: var(--ink); }
+.btn-white:hover { background: var(--surface-2); }
+.btn[disabled], .btn.is-loading { opacity: 0.6; pointer-events: none; }
+.btn-block { width: 100%; }
+
+/* ---------- Floating island nav ---------- */
+.site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 100; pointer-events: none; }
+.island {
+  pointer-events: auto;
+  margin: 24px auto 0; width: max-content; max-width: calc(100% - 32px);
+  display: flex; align-items: center; gap: 24px;
+  padding: 8px 8px 8px 24px; border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(17, 22, 20, 0.08); box-shadow: var(--shadow);
+}
+.logo { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; line-height: 28px; letter-spacing: -0.02em; }
+.logo-mark {
+  width: 32px; height: 32px; border-radius: 8px; background: var(--brand); color: #fff;
+  display: grid; place-items: center; font-size: 18px;
+}
+.logo small { font-weight: 600; color: var(--ink-3); font-size: 12px; line-height: 16px; letter-spacing: 0; }
+.nav-links { display: flex; gap: 4px; list-style: none; }
+.nav-links a {
+  display: block; padding: 8px 12px; border-radius: 9999px; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--ink-2);
+  transition: background-color 0.5s var(--ease), color 0.5s var(--ease);
+}
+.nav-links a:hover { background: var(--surface-2); color: var(--ink); }
+.nav-links a[aria-current="page"] { background: var(--brand-soft); color: var(--brand); }
+.nav-cta { display: flex; gap: 8px; align-items: center; }
+.nav-cta .btn { border-radius: 9999px; }
+.burger {
+  display: none; position: relative; width: 40px; height: 40px; border-radius: 9999px;
+  border: 0; background: var(--ink); cursor: pointer;
+}
+.burger span {
+  position: absolute; left: 12px; width: 16px; height: 2px; background: #fff; border-radius: 2px;
+  transition: transform 0.7s var(--ease), top 0.7s var(--ease);
+}
+.burger span:nth-child(1) { top: 15px; }
+.burger span:nth-child(2) { top: 23px; }
+.menu-open .burger span:nth-child(1) { top: 19px; transform: rotate(45deg); }
+.menu-open .burger span:nth-child(2) { top: 19px; transform: rotate(-45deg); }
+.mobile-menu {
+  position: fixed; inset: 0; z-index: 90; background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+  padding: 120px 24px 40px; display: flex; flex-direction: column; gap: 8px;
+  opacity: 0; pointer-events: none; transition: opacity 0.7s var(--ease);
+}
+.mobile-menu a {
+  font-size: 30px; line-height: 36px; font-weight: 700; padding: 8px 0;
+  transform: translateY(48px); opacity: 0; transition: transform 0.7s var(--ease), opacity 0.7s var(--ease);
+}
+.mobile-menu a[aria-current="page"] { color: var(--brand-2); }
+.menu-open .mobile-menu { opacity: 1; pointer-events: auto; }
+.menu-open .mobile-menu a { transform: none; opacity: 1; }
+@media (max-width: 1080px) {
+  .nav-links, .nav-cta .hide-m { display: none; }
+  .burger { display: block; }
+  .island { gap: 16px; }
+}
+
+/* ---------- Sections ---------- */
+.section { padding: 96px 0; }
+.section-sm { padding: 64px 0; }
+.section-head { max-width: 680px; margin-bottom: 48px; }
+.section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+.section-head .lead { margin-top: 16px; }
+.section-head .eyebrow { margin-bottom: 12px; }
+.bg-white { background: var(--surface); }
+.bg-soft { background: var(--surface-2); }
+.bg-brand { background: var(--brand); color: #fff; }
+.bg-dark { background: #181818; color: #fff; }
+@media (max-width: 640px) { .section { padding: 64px 0; } .section-head { margin-bottom: 32px; } }
+
+.page-hero { padding: 160px 0 64px; }
+.page-hero .lead { max-width: 680px; margin-top: 16px; }
+.page-hero h1 { max-width: 680px; }
+@media (max-width: 640px) { .page-hero { padding: 128px 0 48px; } }
+
+.grid { display: grid; gap: 24px; }
+.g-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.g-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.g-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1000px) { .g-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .g-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 680px) { .g-2, .g-3, .g-4 { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px;
+  transition: transform 0.7s var(--ease), box-shadow 0.7s var(--ease), border-color 0.7s var(--ease);
+}
+.card-hover:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--line-2); }
+.icon-chip {
+  width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; font-size: 24px;
+  background: var(--brand-soft); color: var(--brand);
+}
+.icon-chip.accent { background: var(--accent-soft); color: var(--accent); }
+.feature h3 { margin: 16px 0 8px; font-size: 18px; line-height: 28px; }
+.feature p { color: var(--ink-2); font-size: 14px; line-height: 20px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px;
+  font-size: 12px; line-height: 16px; font-weight: 700; background: var(--surface-2); color: var(--ink-2); white-space: nowrap;
+}
+.badge.green { background: var(--good-soft); color: var(--good); }
+.badge.orange { background: var(--accent-soft); color: #b55b14; }
+.badge.red { background: var(--bad-soft); color: var(--bad); }
+.badge.yellow { background: var(--warn-soft); color: var(--warn); }
+.badge.blue { background: var(--info-soft); color: var(--info); }
+.badge.brand { background: var(--brand-soft); color: var(--brand); }
+.badge.new { background: var(--accent); color: #fff; }
+
+/* ---------- Hero ---------- */
+.hero { position: relative; padding: 160px 0 64px; }
+.hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
+.hero h1 { max-width: 680px; }
+.hero .lead { max-width: 680px; margin: 24px 0 32px; }
+.hero-media { position: relative; }
+.hero-media .main-img { border-radius: 24px; aspect-ratio: 4 / 4.4; object-fit: cover; width: 100%; box-shadow: var(--shadow-lg); }
+.float-card {
+  position: absolute; background: var(--surface); border-radius: 16px; padding: 12px 16px; box-shadow: var(--shadow-lg);
+  display: flex; align-items: center; gap: 12px; font-size: 14px; line-height: 20px;
+}
+.float-card b { display: block; font-size: 16px; line-height: 24px; }
+.float-card.one { left: -32px; bottom: 48px; }
+.float-card.two { right: -16px; top: 32px; }
+.proof-line { display: flex; align-items: center; gap: 12px; margin-top: 32px; color: var(--ink-2); font-size: 14px; line-height: 20px; flex-wrap: wrap; }
+.avatars { display: flex; }
+.avatars span {
+  width: 32px; height: 32px; border-radius: 9999px; border: 2px solid var(--bg); margin-left: -8px;
+  display: grid; place-items: center; font-size: 12px; font-weight: 700; color: #fff;
+}
+.avatars span:first-child { margin-left: 0; }
+@media (max-width: 960px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .float-card.one { left: 16px; }
+  .float-card.two { right: 16px; }
+}
+
+/* ---------- Search bar ---------- */
+.search {
+  display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 8px; padding: 8px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow);
+}
+.search .field { padding: 8px 12px; border-radius: 12px; transition: background-color 0.5s var(--ease); }
+.search .field:hover { background: var(--surface-2); }
+.search label { display: block; font-size: 12px; line-height: 16px; font-weight: 700; color: var(--ink-3); }
+.search select, .search input { border: 0; background: transparent; width: 100%; font-weight: 600; outline: none; padding: 2px 0; }
+.search .btn { border-radius: 12px; height: 100%; }
+@media (max-width: 760px) { .search { grid-template-columns: 1fr 1fr; } .search .field:first-child, .search .btn { grid-column: 1 / -1; } }
+
+/* ---------- Forms ---------- */
+.form-row { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+.input-group { display: flex; flex-direction: column; gap: 4px; }
+.input-group label { font-size: 14px; line-height: 20px; font-weight: 600; }
+.input, select.input, textarea.input {
+  width: 100%; padding: 8px 12px; min-height: 44px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--surface);
+  transition: border-color 0.5s var(--ease), box-shadow 0.5s var(--ease); outline: none;
+}
+.input:focus { border-color: var(--brand-2); box-shadow: 0 0 0 4px var(--brand-soft); }
+.input.invalid { border-color: var(--bad); box-shadow: 0 0 0 4px var(--bad-soft); }
+.field-error { font-size: 12px; line-height: 16px; color: var(--bad); min-height: 16px; }
+textarea.input { min-height: 96px; resize: vertical; }
+
+/* ---------- Chips & toggles ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  padding: 8px 12px; border-radius: 9999px; border: 1px solid var(--line-2); background: var(--surface);
+  font-size: 14px; line-height: 20px; font-weight: 600; cursor: pointer; user-select: none;
+  transition: background-color 0.5s var(--ease), border-color 0.5s var(--ease), color 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.chip:hover { border-color: var(--ink-3); }
+.chip:active { transform: scale(0.98); }
+.chip.active, .chip[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.switch { position: relative; width: 44px; height: 24px; flex: none; }
+.switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.switch span {
+  position: absolute; inset: 0; border-radius: 9999px; background: var(--line-2); cursor: pointer;
+  transition: background-color 0.5s var(--ease);
+}
+.switch span::after {
+  content: ""; position: absolute; left: 2px; top: 2px; width: 20px; height: 20px; border-radius: 9999px; background: #fff;
+  box-shadow: var(--shadow-sm); transition: transform 0.5s var(--ease);
+}
+.switch input:checked + span { background: var(--brand-2); }
+.switch input:checked + span::after { transform: translateX(20px); }
+.switch input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- Property cards ---------- */
+.p-card { overflow: hidden; padding: 0; display: flex; flex-direction: column; position: relative; }
+.p-card .media { position: relative; aspect-ratio: 16 / 11; overflow: hidden; }
+.p-card .media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+.p-card:hover .media img { transform: scale(1.05); }
+.p-card .media .tags { position: absolute; left: 12px; top: 12px; display: flex; gap: 4px; flex-wrap: wrap; }
+.p-card .media .tags .badge { background: rgba(255, 255, 255, 0.94); }
+.p-card .fav {
+  position: absolute; right: 12px; top: 12px; width: 36px; height: 36px; border-radius: 9999px; border: 0;
+  background: rgba(255, 255, 255, 0.94); display: grid; place-items: center; font-size: 18px; cursor: pointer;
+  transition: transform 0.5s var(--ease);
+}
+.p-card .fav:hover { transform: scale(1.08); }
+.p-card .fav.on { color: var(--bad); }
+.p-card .body { padding: 16px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.p-card .loc { font-size: 14px; line-height: 20px; color: var(--ink-3); display: flex; gap: 4px; align-items: center; }
+.p-card .title { font-size: 18px; line-height: 28px; font-weight: 700; }
+.p-card .amen { display: flex; gap: 12px; color: var(--ink-2); font-size: 14px; line-height: 20px; flex-wrap: wrap; }
+.p-card .amen span { display: inline-flex; align-items: center; gap: 4px; }
+.p-card .foot { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); }
+.price { font-size: 20px; line-height: 28px; font-weight: 700; }
+.price small { font-size: 12px; line-height: 16px; color: var(--ink-3); font-weight: 600; }
+.beds-left { font-size: 12px; line-height: 16px; font-weight: 700; color: var(--bad); display: inline-flex; gap: 4px; align-items: center; }
+
+/* ---------- Steps ---------- */
+.steps { counter-reset: step; }
+.step { position: relative; }
+.step .num {
+  width: 40px; height: 40px; border-radius: 9999px; background: var(--ink); color: #fff; font-weight: 700;
+  display: grid; place-items: center; margin-bottom: 16px;
+}
+
+/* ---------- Image split ---------- */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+.split img { border-radius: 24px; width: 100%; aspect-ratio: 5 / 4; object-fit: cover; }
+.split.reverse > :first-child { order: 2; }
+@media (max-width: 900px) { .split { grid-template-columns: 1fr; gap: 32px; } .split.reverse > :first-child { order: 0; } }
+.check-list { list-style: none; display: grid; gap: 12px; margin-top: 24px; }
+.check-list li { display: flex; gap: 12px; align-items: flex-start; color: var(--ink-2); }
+.check-list li i { color: var(--good); font-size: 20px; margin-top: 2px; flex: none; }
+.check-list b { color: var(--ink); }
+
+/* ---------- Tagline reveal ---------- */
+.tagline { padding: 128px 0; }
+.tagline p { font-size: 60px; line-height: 1.05; font-weight: 700; letter-spacing: -0.03em; max-width: 900px; margin: 0 auto; text-align: center; text-wrap: balance; }
+.tagline .w { color: rgba(17, 22, 20, 0.22); transition: color 0.9s var(--ease); }
+.tagline .w.on { color: var(--ink); }
+.tagline .w.hl.on { color: var(--brand-2); }
+@media (max-width: 800px) { .tagline p { font-size: 36px; line-height: 40px; } .tagline { padding: 80px 0; } }
+
+/* ---------- Stats ---------- */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.stat b { display: block; font-size: 48px; line-height: 1; font-weight: 700; letter-spacing: -0.03em; }
+.stat span { display: block; margin-top: 8px; color: var(--ink-2); font-size: 14px; line-height: 20px; }
+.bg-brand .stat span, .bg-dark .stat span { color: rgba(255, 255, 255, 0.72); }
+@media (max-width: 800px) { .stats { grid-template-columns: repeat(2, 1fr); } .stat b { font-size: 36px; } }
+
+/* ---------- Testimonials ---------- */
+.quote { display: flex; flex-direction: column; gap: 16px; }
+.quote p { color: var(--ink-2); }
+.quote .who { display: flex; gap: 12px; align-items: center; margin-top: auto; }
+.av {
+  width: 40px; height: 40px; border-radius: 9999px; display: grid; place-items: center; font-weight: 700; color: #fff; font-size: 14px; flex: none;
+}
+.stars { color: #e0a12c; display: flex; gap: 2px; }
+
+/* ---------- FAQ ---------- */
+.faq { max-width: 820px; margin: 0 auto; display: grid; gap: 12px; }
+.faq details { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 0 24px; transition: border-color 0.5s var(--ease); }
+.faq details[open] { border-color: var(--line-2); }
+.faq summary { list-style: none; cursor: pointer; padding: 16px 0; font-weight: 700; display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary i { transition: transform 0.6s var(--ease); flex: none; }
+.faq details[open] summary i { transform: rotate(45deg); }
+.faq details p { padding: 0 0 16px; color: var(--ink-2); }
+
+/* ---------- CTA band ---------- */
+.cta-band { border-radius: 32px; padding: 64px; background: var(--brand); color: #fff; display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center; overflow: hidden; position: relative; }
+.cta-band p { color: rgba(255, 255, 255, 0.8); margin-top: 16px; }
+.cta-band .actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 860px) { .cta-band { grid-template-columns: 1fr; padding: 40px 24px; } .cta-band .actions { justify-content: flex-start; } }
+
+/* ---------- Footer ---------- */
+.site-footer { background: #181818; color: rgba(255, 255, 255, 0.72); padding: 80px 0 32px; margin-top: 0; }
+.site-footer .cols { display: grid; grid-template-columns: 1.6fr repeat(4, 1fr); gap: 32px; }
+.site-footer h4 { color: #fff; font-size: 14px; line-height: 20px; margin-bottom: 16px; }
+.site-footer ul { list-style: none; display: grid; gap: 8px; font-size: 14px; line-height: 20px; }
+.site-footer a:hover { color: #fff; }
+.site-footer .logo { color: #fff; }
+.site-footer .bottom { margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 14px; line-height: 20px; }
+.socials { display: flex; gap: 8px; margin-top: 24px; }
+.socials a { width: 36px; height: 36px; border-radius: 9999px; background: #272727; display: grid; place-items: center; font-size: 18px; transition: background-color 0.5s var(--ease); }
+.socials a:hover { background: #313131; }
+@media (max-width: 900px) { .site-footer .cols { grid-template-columns: 1fr 1fr; } .site-footer .cols > :first-child { grid-column: 1 / -1; } }
+
+/* ---------- Floating WhatsApp ---------- */
+.wa-fab {
+  position: fixed; right: 24px; bottom: 24px; z-index: 80; width: 56px; height: 56px; border-radius: 9999px;
+  background: #1faa53; color: #fff; display: grid; place-items: center; font-size: 30px; box-shadow: var(--shadow-lg);
+  transition: transform 0.6s var(--ease);
+}
+.wa-fab:hover { transform: scale(1.08); }
+.wa-fab .tip {
+  position: absolute; right: 64px; background: var(--ink); color: #fff; font-size: 12px; line-height: 16px; font-weight: 700;
+  padding: 8px 12px; border-radius: 8px; white-space: nowrap; opacity: 0; transform: translateX(8px); pointer-events: none;
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.wa-fab:hover .tip { opacity: 1; transform: none; }
+
+/* ---------- Modal & toast ---------- */
+.modal-wrap {
+  position: fixed; inset: 0; z-index: 150; background: rgba(17, 22, 20, 0.5); backdrop-filter: blur(4px);
+  display: grid; place-items: center; padding: 16px; opacity: 0; pointer-events: none; transition: opacity 0.5s var(--ease);
+}
+.modal-wrap.open { opacity: 1; pointer-events: auto; }
+.modal {
+  background: var(--surface); border-radius: 24px; width: 100%; max-width: 560px; max-height: calc(100vh - 32px); overflow: auto;
+  padding: 32px; box-shadow: var(--shadow-lg); transform: translateY(24px) scale(0.98); transition: transform 0.7s var(--ease);
+}
+.modal.wide { max-width: 760px; }
+.modal-wrap.open .modal { transform: none; }
+.modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+.icon-btn {
+  width: 36px; height: 36px; border-radius: 9999px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center;
+  cursor: pointer; font-size: 18px; transition: background-color 0.5s var(--ease), transform 0.5s var(--ease); flex: none;
+}
+.icon-btn:hover { background: var(--surface-2); }
+.icon-btn:active { transform: scale(0.96); }
+.toast-stack { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 200; display: grid; gap: 8px; width: max-content; max-width: calc(100% - 32px); }
+.toast {
+  background: var(--ink); color: #fff; padding: 12px 16px; border-radius: 12px; box-shadow: var(--shadow-lg);
+  display: flex; gap: 12px; align-items: center; font-size: 14px; line-height: 20px; font-weight: 600;
+  animation: toast-in 0.7s var(--ease);
+}
+.toast i { font-size: 20px; color: #6ee7a0; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(16px); } }
+
+/* ---------- Reveal ---------- */
+.reveal { opacity: 0; transform: translateY(64px); filter: blur(12px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease), filter 0.9s var(--ease); }
+.reveal.in { opacity: 1; transform: none; filter: none; }
+.reveal.d1 { transition-delay: 0.1s; } .reveal.d2 { transition-delay: 0.15s; } .reveal.d3 { transition-delay: 0.2s; } .reveal.d4 { transition-delay: 0.25s; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; filter: none; } * { transition-duration: 0.01s !important; animation: none !important; } }
+
+/* ---------- Skeleton ---------- */
+.skeleton { background: linear-gradient(90deg, var(--surface-2), #ecebe5, var(--surface-2)); background-size: 200% 100%; animation: shimmer 1.4s infinite linear; border-radius: 12px; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+/* ---------- Tables ---------- */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 20px; }
+.tbl th { text-align: left; font-size: 12px; line-height: 16px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; padding: 12px 16px; background: var(--surface-2); white-space: nowrap; }
+.tbl td { padding: 12px 16px; border-top: 1px solid var(--line); white-space: nowrap; vertical-align: middle; }
+.tbl tbody tr { transition: background-color 0.4s var(--ease); }
+.tbl tbody tr:hover { background: #fafaf7; }
+.tbl .num { font-variant-numeric: tabular-nums; text-align: right; }
+.person { display: flex; gap: 12px; align-items: center; }
+.person .av { width: 32px; height: 32px; font-size: 12px; }
+.person b { display: block; font-weight: 700; }
+.person span { font-size: 12px; line-height: 16px; color: var(--ink-3); }
+
+/* ---------- Utility ---------- */
+.flex { display: flex; } .between { justify-content: space-between; } .center-y { align-items: center; } .wrap { flex-wrap: wrap; }
+.gap-8 { gap: 8px; } .gap-12 { gap: 12px; } .gap-16 { gap: 16px; } .gap-24 { gap: 24px; }
+.mt-8 { margin-top: 8px; } .mt-16 { margin-top: 16px; } .mt-24 { margin-top: 24px; } .mt-32 { margin-top: 32px; } .mt-48 { margin-top: 48px; }
+.mb-16 { margin-bottom: 16px; } .mb-24 { margin-bottom: 24px; }
+.hidden { display: none !important; }
+.round-img { border-radius: 24px; object-fit: cover; width: 100%; }
+.divider { height: 1px; background: var(--line); margin: 24px 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+.demo-ribbon {
+  position: fixed; left: 16px; bottom: 24px; z-index: 70; background: var(--surface); border: 1px solid var(--line); border-radius: 9999px;
+  padding: 8px 12px; font-size: 12px; line-height: 16px; font-weight: 700; color: var(--ink-2); box-shadow: var(--shadow); display: flex; gap: 8px; align-items: center;
+}
+.demo-ribbon i { color: var(--accent); font-size: 16px; }
+@media (max-width: 640px) { .demo-ribbon { display: none; } }
+
+/* Keep grid children from forcing horizontal overflow on small screens */
+.hero-grid > *, .split > *, .grid > *, .layout > *, .b-layout > *, .p-layout > *, .app > * { min-width: 0; }
+.search input, .search select { min-width: 0; }
+
+</style>
+<style>
+  .room-type { overflow: hidden; padding: 0; }
+  .room-type img { aspect-ratio: 4 / 3; object-fit: cover; width: 100%; }
+  .room-type .body { padding: 24px; }
+  .room-type ul { list-style: none; display: grid; gap: 8px; margin: 16px 0 24px; font-size: 14px; line-height: 20px; color: var(--ink-2); }
+  .room-type li { display: flex; gap: 8px; align-items: center; }
+  .room-type li i { color: var(--brand-2); }
+  .room-type.popular { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); }
+
+  .calc { display: grid; grid-template-columns: 1.1fr 1fr; gap: 0; padding: 0; overflow: hidden; }
+  .calc .left { padding: 40px; }
+  .calc .right { padding: 40px; background: var(--brand); color: #fff; display: flex; flex-direction: column; }
+  .calc .line { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.14); font-size: 14px; line-height: 20px; }
+  .calc .line span:last-child { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .calc .total { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 24px; }
+  .calc .total b { font-size: 48px; line-height: 1; letter-spacing: -0.03em; }
+  .calc .compare { margin-top: auto; padding-top: 24px; font-size: 14px; line-height: 20px; color: rgba(255,255,255,0.8); display: flex; gap: 8px; }
+  .range { width: 100%; accent-color: var(--brand); }
+  @media (max-width: 900px) { .calc { grid-template-columns: 1fr; } .calc .left, .calc .right { padding: 24px; } }
+
+  .commute-res { display: grid; gap: 8px; margin-top: 24px; }
+  .commute-row { display: grid; grid-template-columns: 1fr auto auto; gap: 16px; align-items: center; padding: 12px 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); transition: transform .6s var(--ease); }
+  .commute-row:hover { transform: translateX(4px); }
+  .commute-row .bar { height: 8px; border-radius: 4px; background: var(--brand-2); }
+  .life-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 240px 240px; gap: 16px; }
+  .life-grid figure { position: relative; border-radius: 24px; overflow: hidden; }
+  .life-grid figure:first-child { grid-row: span 2; }
+  .life-grid img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+  .life-grid figure:hover img { transform: scale(1.05); }
+  .life-grid figcaption { position: absolute; left: 16px; bottom: 16px; background: rgba(255,255,255,0.94); padding: 4px 12px; border-radius: 9999px; font-size: 14px; line-height: 20px; font-weight: 700; }
+  @media (max-width: 800px) { .life-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 200px 160px 160px; } .life-grid figure:first-child { grid-column: span 2; grid-row: auto; } }
+  .diff .card { display: flex; gap: 16px; }
+  .diff .card .icon-chip { flex: none; }
+  .diff h3 { font-size: 16px; line-height: 24px; margin-bottom: 4px; }
+  .diff p { font-size: 14px; line-height: 20px; color: var(--ink-2); }
+  .logos { display: flex; gap: 40px; flex-wrap: wrap; align-items: center; color: var(--ink-3); font-weight: 700; font-size: 18px; line-height: 28px; }
+</style>
+</head>
+<body data-page="home">
+<div data-header></div>
+
+<main id="main">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow reveal"><i class="ph-fill ph-seal-check"></i>Zero brokerage · Move in within 48 hours</span>
+        <h1 class="h-display grad-text reveal d1" style="margin-top:16px">A PG in Gurugram<br>that feels like home</h1>
+        <p class="lead reveal d2">Fully managed single, double and triple sharing rooms near Cyber City, Golf Course Road and Sohna Road. Meals, WiFi, housekeeping and laundry come included in one clear monthly price.</p>
+        <form class="search reveal d3" action="explore.html" aria-label="Search PGs">
+          <div class="field"><label for="q">Office, college or sector</label><input id="q" name="q" placeholder="e.g. Cyber Hub, Sector 45"></div>
+          <div class="field"><label for="g">Looking for</label><select id="g" name="gender"><option value="">Anyone</option><option>Men</option><option>Women</option><option>Unisex</option></select></div>
+          <div class="field"><label for="s">Sharing</label><select id="s" name="sharing"><option value="">Any</option><option value="single">Single</option><option value="double">Double</option><option value="triple">Triple</option></select></div>
+          <button class="btn btn-primary btn-lg" type="submit"><i class="ph ph-magnifying-glass"></i>Find my PG</button>
+        </form>
+        <div class="proof-line reveal d4">
+          <div class="avatars"><span style="background:#2c6a50">PS</span><span style="background:#e07b2c">RK</span><span style="background:#2a78d6">AM</span><span style="background:#6250d6">NJ</span></div>
+          <span><b style="color:var(--ink)">4.7 out of 5</b> from 835 verified residents</span>
+        </div>
+      </div>
+      <div class="hero-media reveal d2">
+        <img class="main-img" src="assets/img/hero-lounge.jpg" alt="Bright common lounge with sofas and plants at Aangan Cyber Nest">
+        <div class="float-card one"><span class="icon-chip"><i class="ph-fill ph-train"></i></span><div><b>6 min walk</b>to DLF Cyber Hub</div></div>
+        <div class="float-card two"><span class="icon-chip accent"><i class="ph-fill ph-bed"></i></span><div><b>14 beds</b>open this week</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="section-sm">
+    <div class="container">
+      <div class="stats">
+        <div class="stat reveal"><b>6</b><span>Residences across Gurugram</span></div>
+        <div class="stat reveal d1"><b>530</b><span>Beds, all fully furnished</span></div>
+        <div class="stat reveal d2"><b>472</b><span>Residents living with us today</span></div>
+        <div class="stat reveal d3"><b>7 days</b><span>Deposit refund, guaranteed</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section bg-white">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow">How it works</span>
+        <h2 class="h2">From search to keys in three steps</h2>
+        <p class="lead">No broker calls, no hidden charges and no paperwork at the gate.</p>
+      </div>
+      <div class="grid g-3 steps">
+        <div class="card step reveal d1"><div class="num">1</div><h3 class="h4">Find and compare</h3><p class="muted small mt-8">Filter by office commute, budget and sharing type. See real photos, live bed availability and the full monthly cost upfront.</p></div>
+        <div class="card step reveal d2"><div class="num">2</div><h3 class="h4">Visit or video tour</h3><p class="muted small mt-8">Pick a slot for an in person visit or a live video walkthrough with our property manager. Same day slots open till 8 PM.</p></div>
+        <div class="card step reveal d3"><div class="num">3</div><h3 class="h4">Book online and move in</h3><p class="muted small mt-8">Pay a ₹2,000 token, finish KYC on DigiLocker and sign your agreement online. Walk in with your bags.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured -->
+  <section class="section">
+    <div class="container">
+      <div class="flex between center-y wrap gap-16 mb-24">
+        <div class="section-head reveal" style="margin-bottom:0">
+          <span class="eyebrow">Our residences</span>
+          <h2 class="h2">Popular PGs this month</h2>
+        </div>
+        <a href="explore.html" class="btn btn-ghost reveal">View all 6 residences<i class="ph ph-arrow-right"></i></a>
+      </div>
+      <div class="grid g-3" id="featured"></div>
+    </div>
+  </section>
+
+  <!-- Tagline -->
+  <section class="tagline bg-white">
+    <div class="container">
+      <p data-tagline data-highlight="one,price,app">Your room, your meals, your rent and your complaints. All in one price and one app.</p>
+    </div>
+  </section>
+
+  <!-- Room types -->
+  <section class="section" id="rooms">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow">Room types</span>
+        <h2 class="h2">Pick how you want to share</h2>
+        <p class="lead">Every room comes furnished with a bed, mattress, wardrobe, study desk and fast WiFi. Switch room type later without paying a new deposit.</p>
+      </div>
+      <div class="grid g-3">
+        <article class="card room-type card-hover reveal d1">
+          <img src="assets/img/room-single.jpg" alt="Private single room with a double bed and side table" loading="lazy">
+          <div class="body">
+            <div class="flex between center-y"><h3 class="h3">Single</h3><span class="badge">Private</span></div>
+            <ul><li><i class="ph ph-check"></i>Your own room and wardrobe</li><li><i class="ph ph-check"></i>Attached washroom in most homes</li><li><i class="ph ph-check"></i>Best for focus and night shifts</li></ul>
+            <div class="flex between center-y"><div><span class="xs muted">From</span><div class="price">₹13,999<small> /month</small></div></div><a class="btn btn-ghost btn-sm" href="explore.html?sharing=single">See rooms</a></div>
+          </div>
+        </article>
+        <article class="card room-type popular card-hover reveal d2">
+          <img src="assets/img/room-double.jpg" alt="Twin sharing room with two beds and a study corner" loading="lazy">
+          <div class="body">
+            <div class="flex between center-y"><h3 class="h3">Double</h3><span class="badge new">Most booked</span></div>
+            <ul><li><i class="ph ph-check"></i>Share with one matched roommate</li><li><i class="ph ph-check"></i>Two wardrobes and two desks</li><li><i class="ph ph-check"></i>Roommate match quiz included</li></ul>
+            <div class="flex between center-y"><div><span class="xs muted">From</span><div class="price">₹9,799<small> /month</small></div></div><a class="btn btn-primary btn-sm" href="explore.html?sharing=double">See rooms</a></div>
+          </div>
+        </article>
+        <article class="card room-type card-hover reveal d3">
+          <img src="assets/img/room-triple.jpg" alt="Triple sharing room with bunk beds and natural light" loading="lazy">
+          <div class="body">
+            <div class="flex between center-y"><h3 class="h3">Triple</h3><span class="badge green">Best value</span></div>
+            <ul><li><i class="ph ph-check"></i>Lowest monthly cost</li><li><i class="ph ph-check"></i>Great for interns and students</li><li><i class="ph ph-check"></i>Same meals and amenities</li></ul>
+            <div class="flex between center-y"><div><span class="xs muted">From</span><div class="price">₹7,499<small> /month</small></div></div><a class="btn btn-ghost btn-sm" href="explore.html?sharing=triple">See rooms</a></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cost calculator -->
+  <section class="section bg-white" id="calculator">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow"><i class="ph ph-calculator"></i>True cost calculator</span>
+        <h2 class="h2">See your real monthly cost before you visit</h2>
+        <p class="lead">Most PGs quote low rent and add electricity, maintenance and food later. We show everything on day one.</p>
+      </div>
+      <div class="card calc reveal">
+        <div class="left">
+          <div class="input-group"><label>Sharing type</label>
+            <div class="chips" id="c-share"><button type="button" class="chip" data-v="single">Single</button><button type="button" class="chip active" data-v="double">Double</button><button type="button" class="chip" data-v="triple">Triple</button></div>
+          </div>
+          <div class="input-group mt-24"><label>Meal plan</label>
+            <div class="chips" id="c-food"><button type="button" class="chip" data-v="0">No meals</button><button type="button" class="chip" data-v="2800">Breakfast and dinner</button><button type="button" class="chip active" data-v="3900">All 3 meals</button></div>
+          </div>
+          <div class="input-group mt-24"><label>Air conditioning</label>
+            <div class="chips" id="c-ac"><button type="button" class="chip active" data-v="1">AC room</button><button type="button" class="chip" data-v="0">Non AC</button></div>
+          </div>
+          <div class="input-group mt-24"><label for="c-stay">Stay length: <b id="c-stay-l">6 months</b></label>
+            <input class="range" type="range" id="c-stay" min="1" max="12" value="6">
+            <span class="xs muted">6 months or more gets 5% off. 11 months or more gets 8% off.</span>
+          </div>
+        </div>
+        <div class="right">
+          <span class="eyebrow" style="color:rgba(255,255,255,.7)">Your monthly estimate</span>
+          <div class="mt-16" id="c-lines"></div>
+          <div class="total"><div><span class="small" style="color:rgba(255,255,255,.7)">Total per month</span><br><b id="c-total">₹0</b></div><span class="badge" style="background:#fff;color:var(--brand)" id="c-dep"></span></div>
+          <div class="compare"><i class="ph ph-info"></i><span>Electricity is billed on your room sub meter. The estimate uses the Gurugram average of 128 units a month.</span></div>
+          <a href="book.html" class="btn btn-accent btn-lg mt-24">Reserve at this price</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Commute -->
+  <section class="section">
+    <div class="container split">
+      <div class="reveal">
+        <span class="eyebrow"><i class="ph ph-path"></i>Commute finder</span>
+        <h2 class="h2 mt-8">Choose your PG by travel time, not distance</h2>
+        <p class="lead mt-16">Tell us where you work or study. We rank every residence by real peak hour commute by Metro, cab or walking.</p>
+        <div class="input-group mt-24">
+          <label for="office">Where do you go every day?</label>
+          <select class="input" id="office">
+            <option value="cyber">DLF Cyber City / Cyber Hub</option>
+            <option value="golf">Golf Course Road (Sector 42 to 54)</option>
+            <option value="sohna">Sohna Road / Vatika Business Park</option>
+            <option value="udyog">Udyog Vihar</option>
+            <option value="college">Sector 14 colleges</option>
+          </select>
+        </div>
+        <div class="commute-res" id="commute"></div>
+      </div>
+      <img class="reveal d2" src="assets/img/coworking.jpg" alt="Laptops on a shared desk in the coworking lounge" loading="lazy">
+    </div>
+  </section>
+
+  <!-- What makes us different -->
+  <section class="section bg-white diff">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow">Why Aangan</span>
+        <h2 class="h2">Built around the things PG residents complain about most</h2>
+      </div>
+      <div class="grid g-3">
+        <div class="card reveal d1"><span class="icon-chip"><i class="ph ph-receipt"></i></span><div><h3>One clear price</h3><p>Rent, meals, WiFi and housekeeping in one number. Electricity on your own sub meter, so no splitting fights.</p></div></div>
+        <div class="card reveal d2"><span class="icon-chip"><i class="ph ph-hand-coins"></i></span><div><h3>Deposit back in 7 days</h3><p>Track your refund in the app. If it is late, we add ₹100 for every extra day.</p></div></div>
+        <div class="card reveal d3"><span class="icon-chip"><i class="ph ph-arrows-left-right"></i></span><div><h3>Switch rooms or branches</h3><p>Change office? Move to another Aangan home with the same deposit and no new paperwork.</p></div></div>
+        <div class="card reveal d1"><span class="icon-chip accent"><i class="ph ph-users-three"></i></span><div><h3>Roommate matching</h3><p>A 2 minute quiz on sleep time, food and work hours pairs you with someone who fits.</p></div></div>
+        <div class="card reveal d2"><span class="icon-chip accent"><i class="ph ph-calendar-check"></i></span><div><h3>Flexible stays</h3><p>Stay a week, a month or a year. New to Gurugram? Try a 7 day trial stay first.</p></div></div>
+        <div class="card reveal d3"><span class="icon-chip accent"><i class="ph ph-wrench"></i></span><div><h3>Fix requests in 24 hours</h3><p>Raise a ticket with a photo, see who is assigned and rate the fix. No more chasing the caretaker.</p></div></div>
+        <div class="card reveal d1"><span class="icon-chip"><i class="ph ph-shield-check"></i></span><div><h3>Verified neighbours</h3><p>Every resident completes Aadhaar KYC and police verification before move in.</p></div></div>
+        <div class="card reveal d2"><span class="icon-chip"><i class="ph ph-gift"></i></span><div><h3>Refer and save</h3><p>Bring a friend and you both get ₹1,500 off next month's rent. No limit on referrals.</p></div></div>
+        <div class="card reveal d3"><span class="icon-chip"><i class="ph ph-video-camera"></i></span><div><h3>Real photos and video tours</h3><p>Every photo is dated. Not sure yet? Book a live video walkthrough from your current city.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Life at Aangan -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Life at Aangan</span>
+        <h2 class="h2">More than a bed and a meal</h2>
+        <p class="lead">Home style food planned by a nutritionist, gyms in 2 homes, laundry, coworking lounges and weekend events across all branches.</p>
+      </div>
+      <div class="life-grid reveal">
+        <figure><img src="assets/img/community.jpg" alt="Group of residents sitting together at a weekend trip" loading="lazy"><figcaption>Weekend trips and events</figcaption></figure>
+        <figure><img src="assets/img/food-thali.jpg" alt="Home style North Indian thali with roti and sabzi" loading="lazy"><figcaption>Home style meals</figcaption></figure>
+        <figure><img src="assets/img/gym.jpg" alt="In house gym with dumbbells" loading="lazy"><figcaption>In house gym</figcaption></figure>
+        <figure><img src="assets/img/laundry.jpg" alt="Row of washing machines in the laundry room" loading="lazy"><figcaption>Laundry service</figcaption></figure>
+        <figure><img src="assets/img/lounge-2.jpg" alt="Bright lounge with chairs and a reading lamp" loading="lazy"><figcaption>Lounges to unwind</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Safety teaser -->
+  <section class="section bg-white">
+    <div class="container split reverse">
+      <img class="reveal" src="assets/img/residents-chat.jpg" alt="Residents chatting over coffee in a common area" loading="lazy">
+      <div class="reveal d2">
+        <span class="eyebrow"><i class="ph ph-shield-star"></i>Women first safety</span>
+        <h2 class="h2 mt-8">Safe enough that parents stop calling every night</h2>
+        <ul class="check-list">
+          <li><i class="ph-fill ph-check-circle"></i><span><b>Women only homes and floors</b> with a female warden on site 24 hours</span></li>
+          <li><i class="ph-fill ph-check-circle"></i><span><b>Biometric entry and CCTV</b> on every floor and entrance</span></li>
+          <li><i class="ph-fill ph-check-circle"></i><span><b>SOS button in the app</b> that alerts the warden and your emergency contact</span></li>
+          <li><i class="ph-fill ph-check-circle"></i><span><b>Late arrival alerts</b> and a safe cab partner for night shifts</span></li>
+        </ul>
+        <a href="safety.html" class="btn btn-primary mt-32">See our safety standards</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head center reveal"><span class="eyebrow">Resident reviews</span><h2 class="h2">Verified reviews from people who live here</h2><p class="lead">Only current and past residents can post a review, so every rating is linked to a real stay.</p></div>
+      <div class="grid g-3">
+        <figure class="card quote reveal d1"><div class="stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div><p>“I moved from Pune for my job at Cyber City and booked on a video tour. The room was exactly like the photos and my deposit from the last PG never came back, so the 7 day refund promise sold me.”</p><figcaption class="who"><span class="av" style="background:#2c6a50">PS</span><div><b>Priya Sharma</b><div class="xs muted">Product analyst · Aangan Lotus · 14 months</div></div></figcaption></figure>
+        <figure class="card quote reveal d2"><div class="stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div><p>“The food actually tastes like home. My AC broke on a Sunday and the technician came the same evening. I could see the ticket status on my phone the whole time.”</p><figcaption class="who"><span class="av" style="background:#e07b2c">RK</span><div><b>Rohit Kulkarni</b><div class="xs muted">Software engineer · Aangan Cyber Nest · 8 months</div></div></figcaption></figure>
+        <figure class="card quote reveal d3"><div class="stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph ph-star"></i></div><p>“My parents get a WhatsApp update when I check in late and they met the warden on a video call before I joined. The study room during exams is a big plus.”</p><figcaption class="who"><span class="av" style="background:#6250d6">AM</span><div><b>Ananya Mehta</b><div class="xs muted">BBA student · Aangan Neem · 5 months</div></div></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Corporate / Owners -->
+  <section class="section bg-white">
+    <div class="container grid g-2">
+      <a href="corporate.html" class="card card-hover reveal" style="padding:0;overflow:hidden">
+        <img src="assets/img/corporate-team.jpg" alt="Team of professionals working together" style="aspect-ratio:16/8;object-fit:cover;width:100%" loading="lazy">
+        <div style="padding:24px"><span class="eyebrow">For HR teams</span><h3 class="h3 mt-8">House your interns and new joiners</h3><p class="muted small mt-8">Bulk beds, one GST invoice and a dashboard for your team. Trusted by 23 Gurugram companies.</p><span class="btn btn-ghost btn-sm mt-16">Corporate housing<i class="ph ph-arrow-right"></i></span></div>
+      </a>
+      <a href="partner.html" class="card card-hover reveal d2" style="padding:0;overflow:hidden">
+        <img src="assets/img/building.jpg" alt="Residential building exterior" style="aspect-ratio:16/8;object-fit:cover;width:100%" loading="lazy">
+        <div style="padding:24px"><span class="eyebrow">For property owners</span><h3 class="h3 mt-8">Lease your building to Aangan</h3><p class="muted small mt-8">Fixed monthly rent for 9 years, zero vacancy risk and a live dashboard of your property.</p><span class="btn btn-ghost btn-sm mt-16">Partner with us<i class="ph ph-arrow-right"></i></span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-head center reveal"><span class="eyebrow">FAQ</span><h2 class="h2">Questions people ask before booking</h2></div>
+      <div class="faq reveal">
+        <details><summary>Is there any brokerage or hidden charge?<i class="ph ph-plus"></i></summary><p>No brokerage. You pay monthly rent, a refundable security deposit equal to one month of rent and your sub metered electricity. The cost calculator above shows the full amount.</p></details>
+        <details><summary>How much is the booking token?<i class="ph ph-plus"></i></summary><p>₹2,000, adjusted in your first month's rent. It is fully refundable if you cancel at least 72 hours before your move in date.</p></details>
+        <details><summary>What is the notice period?<i class="ph ph-plus"></i></summary><p>30 days for monthly plans and 15 days for stays under 3 months. You can give notice from the resident app.</p></details>
+        <details><summary>When will I get my deposit back?<i class="ph ph-plus"></i></summary><p>Within 7 working days after move out, minus any damage that was recorded on the move in checklist. We add ₹100 for every day we are late.</p></details>
+        <details><summary>Can I visit before booking?<i class="ph ph-plus"></i></summary><p>Yes. Book an in person visit or a live video tour, every day from 10 AM to 8 PM.</p></details>
+        <details><summary>Are guests allowed?<i class="ph ph-plus"></i></summary><p>Day guests are welcome in common areas till 9 PM. Overnight guest stays are available at ₹699 a night in select homes, subject to availability.</p></details>
+        <details><summary>Is food vegetarian?<i class="ph ph-plus"></i></summary><p>All homes serve vegetarian meals daily with non veg on Wednesday and Sunday. Jain and egg options are available on request.</p></details>
+        <details><summary>Can I change my room later?<i class="ph ph-plus"></i></summary><p>Yes. Switch between single, double and triple or move to another Aangan home. Your deposit carries over.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="section-sm">
+    <div class="container">
+      <div class="cta-band reveal">
+        <div><h2 class="h2">Move in this week</h2><p>14 beds open across Gurugram right now. Book a visit or a video tour in under a minute.</p></div>
+        <div class="actions"><a href="book.html" class="btn btn-white btn-lg">Book a visit</a><a href="explore.html" class="btn btn-lg" style="color:#fff;border-color:rgba(255,255,255,.4)">Explore PGs</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div data-footer></div>
+<div class="demo-ribbon"><i class="ph-fill ph-info"></i>Client demo · sample data</div>
+
+<script>
+// Demo data for Aangan Living. Everything here is sample data for the client preview.
+window.AANGAN = {
+  brand: "Aangan Living",
+  phone: "+91 98734 21586",
+  whatsapp: "919873421586",
+  email: "hello@aanganliving.in",
+  properties: [
+    {
+      id: "cyber-nest", name: "Aangan Cyber Nest", area: "DLF Phase 3", sector: "Near Cyber Hub", gender: "Men",
+      audience: "Professionals", food: true, ac: true, rating: 4.7, reviews: 212,
+      img: "assets/img/hero-lounge.jpg", gallery: ["hero-lounge", "room-double", "dining", "gym", "laundry"],
+      landmarks: [["DLF Cyber Hub", "6 min walk"], ["Cyber City Rapid Metro", "4 min walk"], ["Ambience Mall", "9 min drive"], ["IGI Airport", "22 min drive"]],
+      rooms: { single: { price: 21499, left: 2 }, double: { price: 14299, left: 5 }, triple: { price: 10799, left: 0 } },
+      amenities: ["wifi", "food", "ac", "gym", "laundry", "housekeeping", "power", "cctv"], beds: 96, occupied: 89,
+      blurb: "Walk to Cyber Hub. Built for people who work late, with 24 hour cafe access and quiet floors."
+    },
+    {
+      id: "lotus", name: "Aangan Lotus", area: "Sector 45", sector: "Near HUDA City Centre Metro", gender: "Women",
+      audience: "Professionals", food: true, ac: true, rating: 4.8, reviews: 168,
+      img: "assets/img/room-premium.jpg", gallery: ["room-premium", "room-single-2", "living-3", "kitchen", "dining"],
+      landmarks: [["HUDA City Centre Metro", "7 min walk"], ["Artemis Hospital", "8 min drive"], ["Galleria Market", "10 min drive"], ["Cyber City", "18 min drive"]],
+      rooms: { single: { price: 18999, left: 1 }, double: { price: 12799, left: 3 }, triple: { price: 9499, left: 4 } },
+      amenities: ["wifi", "food", "ac", "laundry", "housekeeping", "power", "cctv", "biometric"], beds: 72, occupied: 70,
+      blurb: "Women only residence with a female warden, biometric entry and a 7 minute walk to the Metro."
+    },
+    {
+      id: "orchid", name: "Aangan Orchid", area: "Sohna Road, Sector 49", sector: "Near Omaxe City Centre", gender: "Unisex",
+      audience: "Professionals", food: true, ac: true, rating: 4.6, reviews: 134,
+      img: "assets/img/living-1.jpg", gallery: ["living-1", "room-double-2", "room-single", "common-room", "food-thali"],
+      landmarks: [["Omaxe City Centre", "5 min walk"], ["Vatika Business Park", "6 min drive"], ["Subhash Chowk", "9 min drive"], ["Golf Course Ext Road", "12 min drive"]],
+      rooms: { single: { price: 17499, left: 3 }, double: { price: 11999, left: 6 }, triple: { price: 8999, left: 2 } },
+      amenities: ["wifi", "food", "ac", "laundry", "housekeeping", "power", "cctv", "coworking"], beds: 120, occupied: 104,
+      blurb: "Separate floors for men and women, a rooftop coworking lounge and weekend community events."
+    },
+    {
+      id: "banyan", name: "Aangan Banyan", area: "Udyog Vihar Phase 4", sector: "Near Genpact and Accenture", gender: "Men",
+      audience: "Professionals", food: true, ac: false, rating: 4.4, reviews: 97,
+      img: "assets/img/room-triple.jpg", gallery: ["room-triple", "room-double", "dining", "laundry", "coworking"],
+      landmarks: [["Udyog Vihar Phase 4", "3 min walk"], ["Moulsari Avenue Rapid Metro", "12 min drive"], ["NH 48", "6 min drive"], ["Cyber City", "10 min drive"]],
+      rooms: { single: { price: 15499, left: 0 }, double: { price: 10499, left: 4 }, triple: { price: 7999, left: 7 } },
+      amenities: ["wifi", "food", "laundry", "housekeeping", "power", "cctv"], beds: 84, occupied: 71,
+      blurb: "Value pick for BPO and IT teams. Night shift friendly meal timings and cab pickup point at the gate."
+    },
+    {
+      id: "tulsi", name: "Aangan Tulsi", area: "Golf Course Road, Sector 54", sector: "Near Sector 54 Chowk Metro", gender: "Women",
+      audience: "Professionals", food: true, ac: true, rating: 4.9, reviews: 81,
+      img: "assets/img/room-premium-2.jpg", gallery: ["room-premium-2", "room-single-2", "lounge-2", "gym", "kitchen"],
+      landmarks: [["Sector 54 Chowk Rapid Metro", "5 min walk"], ["One Horizon Center", "8 min drive"], ["Golf Course Road offices", "6 min drive"], ["Worldmark", "14 min drive"]],
+      rooms: { single: { price: 24999, left: 2 }, double: { price: 15999, left: 1 }, triple: { price: 11499, left: 0 } },
+      amenities: ["wifi", "food", "ac", "gym", "laundry", "housekeeping", "power", "cctv", "biometric"], beds: 48, occupied: 46,
+      blurb: "Premium women only rooms on Golf Course Road with a gym, private balconies and a chef led kitchen."
+    },
+    {
+      id: "neem", name: "Aangan Neem", area: "Sector 14", sector: "Near Old Gurgaon colleges", gender: "Unisex",
+      audience: "Students", food: true, ac: false, rating: 4.5, reviews: 143,
+      img: "assets/img/room-study.jpg", gallery: ["room-study", "room-triple", "residents-work", "dining", "food-curry"],
+      landmarks: [["Sector 14 Market", "4 min walk"], ["Government College Sector 14", "8 min walk"], ["IFFCO Chowk Metro", "11 min drive"], ["Sadar Bazaar", "9 min drive"]],
+      rooms: { single: { price: 13999, left: 1 }, double: { price: 9799, left: 5 }, triple: { price: 7499, left: 9 } },
+      amenities: ["wifi", "food", "laundry", "housekeeping", "power", "cctv", "study"], beds: 110, occupied: 92,
+      blurb: "Student friendly with study rooms, exam time quiet hours and parent updates on WhatsApp."
+    }
+  ],
+  amenityMap: {
+    wifi: ["ph-wifi-high", "100 Mbps WiFi"], food: ["ph-bowl-food", "3 meals a day"], ac: ["ph-snowflake", "Air conditioned"],
+    gym: ["ph-barbell", "Gym"], laundry: ["ph-washing-machine", "Laundry"], housekeeping: ["ph-broom", "Daily housekeeping"],
+    power: ["ph-lightning", "Power backup"], cctv: ["ph-security-camera", "24×7 CCTV"], biometric: ["ph-fingerprint", "Biometric entry"],
+    coworking: ["ph-laptop", "Coworking lounge"], study: ["ph-books", "Study room"]
+  }
+};
+
+window.inr = (n) => "₹" + Number(n).toLocaleString("en-IN");
+window.minPrice = (p) => Math.min(...Object.values(p.rooms).map((r) => r.price));
+
+</script>
+<script>
+// Shared behaviour: header, footer, menu, reveals, toasts, modals, validation, cards.
+(function () {
+  const A = window.AANGAN;
+  const page = document.body.dataset.page || "";
+
+  const NAV = [
+    ["explore", "explore.html", "Explore PGs"],
+    ["safety", "safety.html", "Women safety"],
+    ["corporate", "corporate.html", "For companies"],
+    ["partner", "partner.html", "List your property"],
+    ["resident", "resident.html", "Resident app"],
+    ["about", "about.html", "About"]
+  ];
+
+  // ---------- Header ----------
+  const header = document.querySelector("[data-header]");
+  if (header) {
+    const cur = (k) => (k === page ? ' aria-current="page"' : "");
+    header.outerHTML = `
+      <a class="skip-link" href="#main">Skip to content</a>
+      <header class="site-header">
+        <nav class="island" aria-label="Main">
+          <a href="index.html" class="logo"${cur("home")}><span class="logo-mark"><i class="ph-fill ph-house-line"></i></span>Aangan<small>Living</small></a>
+          <ul class="nav-links">${NAV.map(([k, h, t]) => `<li><a href="${h}"${cur(k)}>${t}</a></li>`).join("")}</ul>
+          <div class="nav-cta">
+            <a href="owner-dashboard.html" class="btn btn-ghost btn-sm hide-m"><i class="ph ph-chart-pie-slice"></i>Owner login</a>
+            <a href="book.html" class="btn btn-primary btn-sm">Book a visit</a>
+            <button class="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+          </div>
+        </nav>
+      </header>
+      <div class="mobile-menu" aria-hidden="true">
+        <a href="index.html"${cur("home")}>Home</a>
+        ${NAV.map(([k, h, t], i) => `<a href="${h}"${cur(k)} style="transition-delay:${0.1 + i * 0.05}s">${t}</a>`).join("")}
+        <a href="owner-dashboard.html" style="transition-delay:0.45s">Owner dashboard</a>
+      </div>`;
+    const burger = document.querySelector(".burger");
+    burger.addEventListener("click", () => {
+      const open = document.body.classList.toggle("menu-open");
+      burger.setAttribute("aria-expanded", open);
+      burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      document.querySelector(".mobile-menu").setAttribute("aria-hidden", !open);
+    });
+  }
+
+  // ---------- Footer ----------
+  const footer = document.querySelector("[data-footer]");
+  if (footer) {
+    footer.outerHTML = `
+      <footer class="site-footer">
+        <div class="container">
+          <div class="cols">
+            <div>
+              <a href="index.html" class="logo"><span class="logo-mark"><i class="ph-fill ph-house-line"></i></span>Aangan<small style="color:#9b9b9b">Living</small></a>
+              <p class="small mt-16" style="max-width:320px">Managed PGs and coliving homes across Gurugram. One brand, one standard, one app for everything.</p>
+              <div class="socials">
+                <a href="https://instagram.com" aria-label="Instagram"><i class="ph ph-instagram-logo"></i></a>
+                <a href="https://linkedin.com" aria-label="LinkedIn"><i class="ph ph-linkedin-logo"></i></a>
+                <a href="https://youtube.com" aria-label="YouTube"><i class="ph ph-youtube-logo"></i></a>
+                <a href="https://wa.me/${A.whatsapp}" aria-label="WhatsApp"><i class="ph ph-whatsapp-logo"></i></a>
+              </div>
+            </div>
+            <div><h4>Stay</h4><ul>
+              <li><a href="explore.html">All PGs in Gurugram</a></li>
+              <li><a href="explore.html?gender=Women">PGs for women</a></li>
+              <li><a href="explore.html?gender=Men">PGs for men</a></li>
+              <li><a href="explore.html?audience=Students">Student housing</a></li>
+            </ul></div>
+            <div><h4>Localities</h4><ul>
+              <li><a href="explore.html?q=Cyber">Cyber City</a></li>
+              <li><a href="explore.html?q=Golf">Golf Course Road</a></li>
+              <li><a href="explore.html?q=Sohna">Sohna Road</a></li>
+              <li><a href="explore.html?q=Udyog">Udyog Vihar</a></li>
+            </ul></div>
+            <div><h4>Company</h4><ul>
+              <li><a href="about.html">About us</a></li>
+              <li><a href="corporate.html">Corporate housing</a></li>
+              <li><a href="partner.html">Partner with us</a></li>
+              <li><a href="about.html#faq">FAQs</a></li>
+            </ul></div>
+            <div><h4>Contact</h4><ul>
+              <li><a href="tel:${A.phone.replace(/\s/g, "")}">${A.phone}</a></li>
+              <li><a href="mailto:${A.email}">${A.email}</a></li>
+              <li>Plot 47, Sector 44, Gurugram, Haryana 122003</li>
+            </ul></div>
+          </div>
+          <div class="bottom">
+            <span>© 2026 Aangan Living Pvt Ltd. Demo website for client review.</span>
+            <span class="flex gap-16"><a href="legal.html#privacy">Privacy policy</a><a href="legal.html#terms">Terms</a><a href="legal.html#refund">Refund policy</a></span>
+          </div>
+        </div>
+      </footer>
+      <a class="wa-fab" href="https://wa.me/${A.whatsapp}?text=Hi%2C%20I%20am%20looking%20for%20a%20PG%20in%20Gurugram" aria-label="Chat on WhatsApp"><i class="ph-fill ph-whatsapp-logo"></i><span class="tip">Chat with us on WhatsApp</span></a>
+      <div class="toast-stack" aria-live="polite"></div>`;
+  } else if (!document.querySelector(".toast-stack")) {
+    document.body.insertAdjacentHTML("beforeend", '<div class="toast-stack" aria-live="polite"></div>');
+  }
+
+  // ---------- Reveal on scroll ----------
+  window.observeReveals = function () {
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.12 });
+    document.querySelectorAll(".reveal:not(.in)").forEach((el) => io.observe(el));
+  };
+  observeReveals();
+
+  // ---------- Tagline word reveal ----------
+  document.querySelectorAll("[data-tagline]").forEach((p) => {
+    const hl = (p.dataset.highlight || "").split(",");
+    p.innerHTML = p.textContent.trim().split(/\s+/).map((w) => `<span class="w${hl.includes(w.replace(/[.,]/g, "")) ? " hl" : ""}">${w}</span>`).join(" ");
+    const words = [...p.querySelectorAll(".w")];
+    let ticking = false;
+    const update = () => {
+      const line = window.innerHeight * 0.62;
+      words.forEach((w) => w.classList.toggle("on", w.getBoundingClientRect().top < line));
+      ticking = false;
+    };
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => {
+        if (e.isIntersecting) window.addEventListener("scroll", onScroll, { passive: true });
+        else window.removeEventListener("scroll", onScroll);
+      });
+    });
+    function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+    io.observe(p);
+    update();
+  });
+
+  // ---------- Toast ----------
+  window.toast = function (msg, icon = "ph-check-circle") {
+    const s = document.querySelector(".toast-stack");
+    const t = document.createElement("div");
+    t.className = "toast";
+    t.innerHTML = `<i class="ph-fill ${icon}"></i><span>${msg}</span>`;
+    s.appendChild(t);
+    setTimeout(() => { t.style.transition = "opacity .5s"; t.style.opacity = 0; setTimeout(() => t.remove(), 500); }, 3200);
+  };
+
+  // ---------- Modal ----------
+  window.openModal = function (id) { const m = document.getElementById(id); if (m) { m.classList.add("open"); m.querySelector("input,select,textarea,button")?.focus(); } };
+  window.closeModal = function (el) { (el.closest ? el.closest(".modal-wrap") : document.getElementById(el)).classList.remove("open"); };
+  document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("modal-wrap")) e.target.classList.remove("open");
+    const c = e.target.closest("[data-close]"); if (c) closeModal(c);
+    const o = e.target.closest("[data-open]"); if (o) { e.preventDefault(); openModal(o.dataset.open); }
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelectorAll(".modal-wrap.open").forEach((m) => m.classList.remove("open")); });
+
+  // ---------- Form validation ----------
+  window.validateForm = function (form) {
+    let ok = true;
+    form.querySelectorAll("[required], [data-type]").forEach((f) => {
+      const v = f.value.trim();
+      let err = "";
+      if (f.hasAttribute("required") && !v) err = "This field is required";
+      else if (v && f.dataset.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) err = "Enter a valid email like name@company.com";
+      else if (v && f.dataset.type === "phone" && !/^(\+91[\s]?)?[6-9]\d{9}$/.test(v.replace(/\s/g, ""))) err = "Enter a valid 10 digit Indian mobile number";
+      f.classList.toggle("invalid", !!err);
+      const msg = f.closest(".input-group")?.querySelector(".field-error");
+      if (msg) msg.textContent = err;
+      if (err) ok = false;
+    });
+    return ok;
+  };
+  document.querySelectorAll("form[data-validate]").forEach((form) => {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!validateForm(form)) return;
+      const btn = form.querySelector("[type=submit]");
+      const label = btn.innerHTML;
+      btn.classList.add("is-loading"); btn.innerHTML = '<i class="ph ph-circle-notch"></i>Sending';
+      setTimeout(() => {
+        btn.classList.remove("is-loading"); btn.innerHTML = label;
+        toast(form.dataset.success || "Thanks. Our team will call you within 30 minutes.");
+        form.reset();
+        form.closest(".modal-wrap")?.classList.remove("open");
+      }, 900);
+    });
+  });
+
+  // ---------- Property card ----------
+  const GCOL = { Men: "blue", Women: "orange", Unisex: "brand" };
+  window.propertyCard = function (p, i = 0) {
+    const totalLeft = Object.values(p.rooms).reduce((a, r) => a + r.left, 0);
+    return `
+      <article class="card card-hover p-card reveal d${(i % 3) + 1}">
+        <a href="property.html?id=${p.id}" class="media" aria-label="${p.name}">
+          <img src="${p.img}" alt="Room at ${p.name}, ${p.area}" loading="lazy">
+          <div class="tags"><span class="badge ${GCOL[p.gender]}">${p.gender === "Unisex" ? "Unisex" : "For " + p.gender.toLowerCase()}</span>${p.audience === "Students" ? '<span class="badge">Students</span>' : ""}</div>
+        </a>
+        <button class="fav" aria-label="Save ${p.name}" aria-pressed="false" onclick="this.classList.toggle('on');this.firstElementChild.className=this.classList.contains('on')?'ph-fill ph-heart':'ph ph-heart';toast(this.classList.contains('on')?'Saved to your shortlist':'Removed from shortlist')"><i class="ph ph-heart"></i></button>
+        <div class="body">
+          <div class="flex between center-y"><span class="loc"><i class="ph ph-map-pin"></i>${p.area}</span><span class="small flex center-y gap-8"><i class="ph-fill ph-star" style="color:#e0a12c"></i><b>${p.rating}</b><span class="muted">(${p.reviews})</span></span></div>
+          <a href="property.html?id=${p.id}" class="title">${p.name}</a>
+          <div class="amen">${p.amenities.slice(0, 4).map((a) => `<span><i class="ph ${A.amenityMap[a][0]}"></i>${A.amenityMap[a][1].split(" ")[0] === "100" ? "WiFi" : A.amenityMap[a][1]}</span>`).join("")}</div>
+          <div class="foot">
+            <div><span class="xs muted">Starts from</span><div class="price">${inr(minPrice(p))}<small> /month</small></div></div>
+            ${totalLeft <= 6 ? `<span class="beds-left"><i class="ph-fill ph-fire"></i>Only ${totalLeft} beds left</span>` : `<span class="badge green">${totalLeft} beds open</span>`}
+          </div>
+        </div>
+      </article>`;
+  };
+
+  window.qs = (k) => new URLSearchParams(location.search).get(k);
+})();
+
+</script>
+<script>
+  const A = window.AANGAN;
+  document.getElementById("featured").innerHTML = A.properties.slice(0, 3).map(propertyCard).join("");
+  observeReveals();
+
+  // Cost calculator
+  const base = { single: 17499, double: 11999, triple: 8999 };
+  const st = { share: "double", food: 3900, ac: 1, stay: 6 };
+  function chipGroup(id, key, num) {
+    document.querySelectorAll(`#${id} .chip`).forEach((c) => c.addEventListener("click", () => {
+      document.querySelectorAll(`#${id} .chip`).forEach((x) => x.classList.remove("active"));
+      c.classList.add("active"); st[key] = num ? Number(c.dataset.v) : c.dataset.v; calc();
+    }));
+  }
+  chipGroup("c-share", "share"); chipGroup("c-food", "food", true); chipGroup("c-ac", "ac", true);
+  document.getElementById("c-stay").addEventListener("input", (e) => { st.stay = Number(e.target.value); calc(); });
+  function calc() {
+    const rent = base[st.share] - (st.ac ? 0 : 1500) - 3900;
+    const disc = st.stay >= 11 ? 0.08 : st.stay >= 6 ? 0.05 : 0;
+    const d = Math.round(rent * disc);
+    const elec = Math.round((st.ac ? 128 : 64) * 9 / (st.share === "single" ? 1 : st.share === "double" ? 1.6 : 2.1));
+    const lines = [["Room rent", rent], ["Meals", st.food], ["WiFi, housekeeping, laundry", 0], ["Electricity estimate", elec]];
+    if (d) lines.push([`Long stay discount (${disc * 100}%)`, -d]);
+    document.getElementById("c-lines").innerHTML = lines.map(([k, v]) => `<div class="line"><span>${k}</span><span>${v === 0 ? "Included" : (v < 0 ? "− " + inr(-v) : inr(v))}</span></div>`).join("");
+    const total = rent + st.food + elec - d;
+    document.getElementById("c-total").textContent = inr(total);
+    document.getElementById("c-dep").textContent = "Deposit " + inr(rent + st.food);
+    document.getElementById("c-stay-l").textContent = st.stay + (st.stay === 1 ? " month" : " months");
+  }
+  calc();
+
+  // Commute finder
+  const T = {
+    cyber: { "cyber-nest": [6, "walk"], orchid: [24, "cab"], banyan: [11, "cab"], lotus: [19, "metro"], tulsi: [17, "metro"], neem: [27, "cab"] },
+    golf: { tulsi: [6, "cab"], lotus: [14, "cab"], orchid: [16, "cab"], "cyber-nest": [18, "metro"], banyan: [26, "cab"], neem: [31, "cab"] },
+    sohna: { orchid: [6, "cab"], lotus: [16, "cab"], tulsi: [21, "cab"], neem: [24, "cab"], "cyber-nest": [33, "cab"], banyan: [36, "cab"] },
+    udyog: { banyan: [3, "walk"], "cyber-nest": [12, "cab"], neem: [19, "cab"], lotus: [25, "metro"], tulsi: [27, "cab"], orchid: [31, "cab"] },
+    college: { neem: [8, "walk"], lotus: [16, "cab"], banyan: [21, "cab"], orchid: [23, "cab"], "cyber-nest": [26, "cab"], tulsi: [29, "cab"] }
+  };
+  const ICON = { walk: "ph-person-simple-walk", cab: "ph-car-profile", metro: "ph-train" };
+  function commute() {
+    const t = T[document.getElementById("office").value];
+    const rows = Object.entries(t).sort((a, b) => a[1][0] - b[1][0]).slice(0, 4);
+    document.getElementById("commute").innerHTML = rows.map(([id, [m, mode]], i) => {
+      const p = A.properties.find((x) => x.id === id);
+      return `<a class="commute-row" href="property.html?id=${id}"><div><b>${p.name}</b><div class="xs muted">${p.area} · from ${inr(minPrice(p))}</div></div><div class="bar" style="width:${Math.max(16, 96 - m * 2)}px" aria-hidden="true"></div><span class="badge ${i === 0 ? "green" : ""}"><i class="ph ${ICON[mode]}"></i>${m} min</span></a>`;
+    }).join("");
+  }
+  document.getElementById("office").addEventListener("change", commute);
+  commute();
+</script>
+</body>
+</html>
