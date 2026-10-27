@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aangan Living · Instagram reel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root { --brand: #1f4d3a; --brand-2: #2c6a50; --accent: #e07b2c; --cream: #fbfaf7; --ink: #111614; --soft: #e5efe9; --bad: #c43b3b; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #0d0d0d; overflow: hidden; height: 100%; }
+  body { font-family: "Manrope", system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; display: grid; place-items: center; }
+  #stage { width: 1080px; height: 1920px; position: relative; overflow: hidden; background: var(--cream); transform-origin: center center; flex: none; }
+  body.render { display: block; }
+  body.render #stage { transform: none !important; }
+  .scene { position: absolute; inset: 0; opacity: 0; overflow: hidden; }
+  .full { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .center { position: absolute; left: 0; right: 0; text-align: center; }
+  h1, h2, h3 { font-weight: 700; letter-spacing: -0.03em; }
+
+  /* S1 hook */
+  #s1 .shade { position: absolute; inset: 0; background: rgba(10, 16, 13, 0.52); }
+  #s1 .tag { position: absolute; top: 300px; left: 90px; padding: 12px 24px; border-radius: 9999px; background: rgba(255,255,255,.16); color: #fff; font-size: 30px; font-weight: 700; letter-spacing: .12em; display: flex; gap: 12px; align-items: center; backdrop-filter: blur(12px); }
+  #s1 .lines { position: absolute; left: 90px; top: 640px; color: #fff; }
+  #s1 .lines div { font-size: 128px; line-height: 1.04; font-weight: 700; letter-spacing: -0.04em; overflow: hidden; }
+  #s1 .lines span { display: inline-block; }
+  #s1 .lines .acc { color: #ffb37a; }
+
+  /* S2 pain */
+  #s2 h2 { position: absolute; top: 330px; left: 90px; font-size: 96px; line-height: 1; }
+  .pain { position: absolute; left: 90px; width: 900px; height: 170px; border-radius: 40px; background: #fff; box-shadow: 0 20px 60px rgba(17,22,20,.08); display: flex; align-items: center; gap: 32px; padding: 0 40px; font-size: 48px; font-weight: 700; }
+  .pain .ic { width: 96px; height: 96px; border-radius: 28px; display: grid; place-items: center; font-size: 52px; background: #fbe7e6; color: var(--bad); flex: none; }
+  .pain .strike { position: absolute; left: 168px; right: 120px; top: 50%; height: 8px; border-radius: 4px; background: var(--bad); transform-origin: left center; transform: scaleX(0); }
+  .pain .x { position: absolute; right: 40px; width: 64px; height: 64px; border-radius: 9999px; background: var(--bad); color: #fff; display: grid; place-items: center; font-size: 36px; transform: scale(0); }
+  #s2 .nomore { position: absolute; left: 90px; top: 1400px; font-size: 120px; line-height: 1; color: var(--brand); font-weight: 700; letter-spacing: -0.04em; }
+
+  /* S3 brand */
+  #s3 { background: var(--brand); color: #fff; z-index: 5; }
+  #s3 .ring { position: absolute; left: 50%; top: 820px; width: 300px; height: 300px; margin: -150px 0 0 -150px; border-radius: 9999px; border: 3px solid rgba(255,255,255,.25); }
+  #s3 .mark { position: absolute; left: 50%; top: 820px; width: 240px; height: 240px; margin: -120px 0 0 -120px; border-radius: 64px; background: #fff; color: var(--brand); display: grid; place-items: center; font-size: 150px; }
+  #s3 .name { top: 1040px; font-size: 128px; line-height: 1; }
+  #s3 .name span { display: inline-block; }
+  #s3 .tl { top: 1200px; font-size: 44px; color: rgba(255,255,255,.75); font-weight: 600; }
+
+  /* S4 rooms */
+  #s4 h2 { top: 250px; font-size: 88px; }
+  .room { position: absolute; left: 90px; top: 420px; width: 900px; height: 1040px; border-radius: 56px; overflow: hidden; background: #fff; box-shadow: 0 30px 80px rgba(17,22,20,.14); }
+  .room img { width: 100%; height: 760px; object-fit: cover; }
+  .room .info { padding: 36px 48px; display: flex; justify-content: space-between; align-items: center; }
+  .room .t { font-size: 72px; font-weight: 700; letter-spacing: -0.03em; }
+  .room .s { font-size: 32px; color: #4a524e; font-weight: 600; margin-top: 4px; }
+  .room .p { text-align: right; }
+  .room .p small { display: block; font-size: 28px; color: #7c8480; font-weight: 600; }
+  .room .p b { font-size: 72px; letter-spacing: -0.03em; color: var(--brand); }
+  .room .badge { position: absolute; top: 40px; left: 40px; padding: 12px 28px; border-radius: 9999px; background: var(--accent); color: #fff; font-size: 30px; font-weight: 700; }
+  .incl { position: absolute; top: 1510px; left: 0; right: 0; display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; padding: 0 60px; }
+  .incl span { padding: 16px 28px; border-radius: 9999px; background: var(--brand); color: #fff; font-size: 32px; font-weight: 700; display: inline-flex; gap: 12px; align-items: center; }
+
+  /* S5 life */
+  #s5 { background: #181818; color: #fff; }
+  #s5 h2 { position: absolute; top: 250px; left: 90px; font-size: 88px; line-height: 1; }
+  .tile { position: absolute; width: 440px; height: 560px; border-radius: 48px; overflow: hidden; }
+  .tile img { width: 100%; height: 100%; object-fit: cover; }
+  .tile span { position: absolute; left: 24px; bottom: 24px; padding: 12px 24px; border-radius: 9999px; background: rgba(255,255,255,.95); color: var(--ink); font-size: 30px; font-weight: 700; }
+  #s5 .promise { position: absolute; left: 90px; right: 90px; top: 1440px; padding: 48px; border-radius: 48px; background: var(--accent); color: #fff; display: flex; gap: 32px; align-items: center; }
+  #s5 .promise i { font-size: 96px; }
+  #s5 .promise b { font-size: 60px; line-height: 1.05; letter-spacing: -0.03em; display: block; }
+  #s5 .promise small { font-size: 32px; font-weight: 600; opacity: .9; }
+
+  /* S6 automation */
+  #s6 { background: var(--soft); }
+  #s6 h2 { top: 220px; font-size: 84px; line-height: 1; }
+  #s6 .sub { top: 320px; font-size: 38px; color: #4a524e; font-weight: 600; }
+  .phone { position: absolute; left: 210px; top: 430px; width: 660px; height: 1200px; border-radius: 80px; background: #111; padding: 22px; box-shadow: 0 40px 100px rgba(17,22,20,.25); }
+  .phone .scr { width: 100%; height: 100%; border-radius: 60px; overflow: hidden; background: #ece5dd; display: flex; flex-direction: column; }
+  .wa-h { background: #075e54; color: #fff; padding: 64px 28px 24px; display: flex; align-items: center; gap: 18px; flex: none; }
+  .wa-h .av { width: 68px; height: 68px; border-radius: 9999px; background: #fff; color: var(--brand); display: grid; place-items: center; font-size: 40px; }
+  .wa-h b { font-size: 32px; display: flex; align-items: center; gap: 6px; }
+  .wa-h b i { color: #25d366; font-size: 28px; }
+  .wa-h small { font-size: 22px; opacity: .8; }
+  .chat { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 22px 28px; overflow: hidden; }
+  .msg { flex-shrink: 0; max-width: 82%; border-radius: 22px; padding: 0 22px; font-size: 27px; line-height: 1.3; font-weight: 500; overflow: hidden; max-height: 0; opacity: 0; margin-top: 0; box-shadow: 0 1px 1px rgba(0,0,0,.08); }
+  .msg.in { background: #fff; align-self: flex-start; border-top-left-radius: 6px; }
+  .msg.out { background: #dcf8c6; align-self: flex-end; border-top-right-radius: 6px; }
+  .msg .inner { padding: 16px 0; }
+  .msg .tm { display: block; text-align: right; font-size: 18px; color: #7c8480; margin-top: 4px; }
+  .msg .card { background: #f3f2ed; border-radius: 14px; padding: 14px 16px; margin-top: 10px; display: flex; gap: 12px; align-items: center; font-weight: 700; }
+  .msg .card i { font-size: 36px; color: var(--brand-2); }
+  .msg .btnp { display: block; text-align: center; margin-top: 12px; padding: 12px; border-radius: 12px; background: var(--brand); color: #fff; font-weight: 700; }
+  .chip { position: absolute; padding: 18px 28px; border-radius: 9999px; background: var(--ink); color: #fff; font-size: 32px; font-weight: 700; display: flex; gap: 12px; align-items: center; box-shadow: 0 20px 50px rgba(17,22,20,.25); }
+  .chip i { color: #6ee7a0; font-size: 36px; }
+
+  /* S7 CTA */
+  #s7 { background: var(--brand); color: #fff; }
+  #s7 .photo { position: absolute; left: 90px; right: 90px; top: 250px; height: 640px; border-radius: 56px; overflow: hidden; }
+  #s7 .photo img { width: 100%; height: 100%; object-fit: cover; }
+  #s7 h2 { position: absolute; left: 90px; top: 950px; font-size: 120px; line-height: 1; letter-spacing: -0.04em; }
+  #s7 .pts { position: absolute; left: 90px; top: 1210px; font-size: 38px; font-weight: 600; color: rgba(255,255,255,.85); display: grid; gap: 14px; }
+  #s7 .pts div { display: flex; gap: 14px; align-items: center; }
+  #s7 .pts i { color: #6ee7a0; }
+  #s7 .cta { position: absolute; left: 90px; right: 90px; top: 1440px; height: 130px; border-radius: 9999px; background: #fff; color: var(--brand); font-size: 48px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 16px; }
+  #s7 .dm { position: absolute; left: 90px; right: 90px; top: 1600px; text-align: center; font-size: 34px; font-weight: 600; color: #ffd2ad; display: flex; justify-content: center; gap: 12px; align-items: center; }
+  #s7 .foot { position: absolute; left: 90px; right: 90px; top: 1690px; display: flex; justify-content: center; gap: 20px; align-items: center; font-size: 28px; color: rgba(255,255,255,.7); font-weight: 600; }
+  .logo-s { display: inline-flex; gap: 12px; align-items: center; color: #fff; font-weight: 700; font-size: 34px; }
+  .logo-s span { width: 52px; height: 52px; border-radius: 14px; background: #fff; color: var(--brand); display: grid; place-items: center; font-size: 30px; }
+
+  /* progress bar for preview only */
+  #bar { position: fixed; left: 0; bottom: 0; height: 4px; background: var(--accent); width: 0; }
+  body.render #bar, body.render #hint { display: none; }
+  #hint { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); color: #aaa; font: 600 13px Manrope, sans-serif; }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- S1 Hook -->
+  <section class="scene" id="s1">
+    <img class="full" id="s1img" src="../assets/img/hero-lounge.jpg" alt="">
+    <div class="shade"></div>
+    <div class="tag"><i class="ph-fill ph-map-pin"></i>GURUGRAM</div>
+    <div class="lines">
+      <div><span>New city.</span></div>
+      <div><span>New job.</span></div>
+      <div><span class="acc">Same old</span></div>
+      <div><span class="acc">PG problems?</span></div>
+    </div>
+  </section>
+
+  <!-- S2 Pain -->
+  <section class="scene" id="s2">
+    <h2>Sound<br>familiar?</h2>
+    <div class="pain" style="top:700px"><span class="ic"><i class="ph-bold ph-hand-coins"></i></span>₹15,000 broker fee<span class="strike"></span><span class="x"><i class="ph-bold ph-x"></i></span></div>
+    <div class="pain" style="top:900px"><span class="ic"><i class="ph-bold ph-lightning"></i></span>Surprise electricity bill<span class="strike"></span><span class="x"><i class="ph-bold ph-x"></i></span></div>
+    <div class="pain" style="top:1100px"><span class="ic"><i class="ph-bold ph-lock-key"></i></span>Deposit stuck for months<span class="strike"></span><span class="x"><i class="ph-bold ph-x"></i></span></div>
+    <div class="nomore">Not anymore.</div>
+  </section>
+
+  <!-- S3 Brand -->
+  <section class="scene" id="s3">
+    <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+    <div class="mark"><i class="ph-fill ph-house-line"></i></div>
+    <h1 class="center name"><span>Aangan</span> <span>Living</span></h1>
+    <p class="center tl">Managed PGs across Gurugram</p>
+  </section>
+
+  <!-- S4 Rooms -->
+  <section class="scene" id="s4">
+    <h2 class="center">Pick your room</h2>
+    <div class="room" id="r1"><img src="../assets/img/room-single.jpg" alt=""><span class="badge">Private</span><div class="info"><div><div class="t">Single</div><div class="s">Your own room</div></div><div class="p"><small>from</small><b>₹13,999</b></div></div></div>
+    <div class="room" id="r2"><img src="../assets/img/room-double.jpg" alt=""><span class="badge">Most booked</span><div class="info"><div><div class="t">Double</div><div class="s">Matched roommate</div></div><div class="p"><small>from</small><b>₹9,799</b></div></div></div>
+    <div class="room" id="r3"><img src="../assets/img/room-triple.jpg" alt=""><span class="badge">Best value</span><div class="info"><div><div class="t">Triple</div><div class="s">Lowest monthly cost</div></div><div class="p"><small>from</small><b>₹7,499</b></div></div></div>
+    <div class="incl"><span><i class="ph-bold ph-bowl-food"></i>3 meals</span><span><i class="ph-bold ph-wifi-high"></i>WiFi</span><span><i class="ph-bold ph-broom"></i>Housekeeping</span><span><i class="ph-bold ph-washing-machine"></i>Laundry</span></div>
+  </section>
+
+  <!-- S5 Life -->
+  <section class="scene" id="s5">
+    <h2>More than<br>a bed.</h2>
+    <div class="tile" style="left:90px;top:520px"><img src="../assets/img/food-thali.jpg" alt=""><span>Home style meals</span></div>
+    <div class="tile" style="left:550px;top:520px"><img src="../assets/img/gym.jpg" alt=""><span>In house gym</span></div>
+    <div class="tile" style="left:90px;top:1100px;height:300px"><img src="../assets/img/community.jpg" alt=""><span>Weekend events</span></div>
+    <div class="tile" style="left:550px;top:1100px;height:300px"><img src="../assets/img/residents-chat.jpg" alt=""><span>Women safe homes</span></div>
+    <div class="promise"><i class="ph-fill ph-seal-check"></i><div><b>Deposit back in 7 days.</b><small>Guaranteed, or we pay ₹100 a day.</small></div></div>
+  </section>
+
+  <!-- S6 Automation -->
+  <section class="scene" id="s6">
+    <h2 class="center">All on WhatsApp</h2>
+    <p class="center sub">Book, pay and get help in seconds</p>
+    <div class="phone"><div class="scr">
+      <div class="wa-h"><span class="av"><i class="ph-fill ph-house-line"></i></span><div><b>Aangan Living <i class="ph-fill ph-seal-check"></i></b><small>Business account · replies instantly</small></div></div>
+      <div class="chat">
+        <div class="msg out"><div class="inner">Hi, need a PG near Cyber Hub<span class="tm">7:02 PM</span></div></div>
+        <div class="msg in"><div class="inner">Hi Riya. 3 homes within 10 min of Cyber Hub. Double sharing from <b>₹14,299</b> with meals.<span class="tm">7:02 PM</span></div></div>
+        <div class="msg in"><div class="inner"><div class="card" style="margin-top:0"><i class="ph-fill ph-calendar-check"></i><div>Visit confirmed<br><span style="font-weight:500;font-size:22px">Sat, 4:30 PM · Cyber Nest</span></div></div><span class="tm">7:03 PM</span></div></div>
+        <div class="msg in"><div class="inner">Bed 207B is reserved. Welcome home.<span class="tm">Sat 6:10 PM</span></div></div>
+        <div class="msg in"><div class="inner">Rent reminder: <b>₹14,299</b> due on 5 Nov.<span class="btnp">Pay with UPI</span><span class="tm">2 Nov</span></div></div>
+        <div class="msg in"><div class="inner"><div class="card" style="margin-top:0"><i class="ph-fill ph-check-circle"></i><div>Payment received<br><span style="font-weight:500;font-size:22px">Receipt sent to your email</span></div></div><span class="tm">3 Nov</span></div></div>
+      </div>
+    </div></div>
+    <div class="chip" id="c1" style="left:40px;top:720px"><i class="ph-fill ph-robot"></i>Replies 24×7</div>
+    <div class="chip" id="c2" style="right:40px;top:780px"><i class="ph-fill ph-bell-ringing"></i>Auto rent reminders</div>
+    <div class="chip" id="c3" style="left:40px;top:760px"><i class="ph-fill ph-receipt"></i>Instant receipts</div>
+  </section>
+
+  <!-- S7 CTA -->
+  <section class="scene" id="s7">
+    <div class="photo"><img id="s7img" src="../assets/img/room-premium.jpg" alt=""></div>
+    <h2>Move in<br>this week.</h2>
+    <div class="pts"><div><i class="ph-fill ph-check-circle"></i>Zero brokerage</div><div><i class="ph-fill ph-check-circle"></i>Meals, WiFi and cleaning included</div></div>
+    <div class="cta"><i class="ph-bold ph-calendar-plus"></i>Book a free visit</div>
+    <div class="dm"><i class="ph-fill ph-chat-circle-dots"></i>Comment “PG” and get prices in your DM</div>
+    <div class="foot"><span class="logo-s"><span><i class="ph-fill ph-house-line"></i></span>Aangan Living</span>·<span>aanganliving.in</span></div>
+  </section>
+</div>
+<div id="bar"></div>
+<div id="hint">Click to replay</div>
+
+<script>
+const RENDER = new URLSearchParams(location.search).has("render");
+if (RENDER) document.body.classList.add("render");
+const DUR = 37;
+const tl = gsap.timeline({ paused: true });
+const E = "power3.out", EI = "power3.inOut";
+const show = (sel, t) => tl.set(sel, { opacity: 1 }, t);
+const hide = (sel, t, d = 0.4) => tl.to(sel, { opacity: 0, duration: d, ease: "power2.in" }, t);
+
+/* S1 0 to 4.4 */
+show("#s1", 0);
+tl.fromTo("#s1img", { scale: 1.18 }, { scale: 1.02, duration: 4.6, ease: "none" }, 0);
+tl.from("#s1 .tag", { y: -40, opacity: 0, duration: 0.6, ease: E }, 0.1);
+["0.2", "0.9", "1.7", "2.1"].forEach((t, i) => tl.from(`#s1 .lines div:nth-child(${i + 1}) span`, { yPercent: 110, duration: 0.7, ease: E }, +t));
+tl.to("#s1 .lines .acc", { color: "#ffb37a", duration: 0.1 }, 2);
+tl.to("#s1 .lines", { y: -80, opacity: 0, duration: 0.5, ease: "power2.in" }, 3.9);
+hide("#s1", 4.1, 0.3);
+
+/* S2 4.4 to 9.6 */
+show("#s2", 4.3);
+tl.from("#s2 h2", { y: 80, opacity: 0, duration: 0.7, ease: E }, 4.4);
+document.querySelectorAll("#s2 .pain").forEach((p, i) => {
+  tl.from(p, { x: 1100, duration: 0.7, ease: "back.out(1.2)" }, 4.9 + i * 0.5);
+  tl.to(p.querySelector(".strike"), { scaleX: 1, duration: 0.35, ease: EI }, 6.7 + i * 0.4);
+  tl.to(p.querySelector(".x"), { scale: 1, duration: 0.35, ease: "back.out(2)" }, 6.85 + i * 0.4);
+  tl.to(p, { opacity: 0.55, duration: 0.3 }, 7.0 + i * 0.4);
+});
+tl.from("#s2 .nomore", { scale: 0.6, opacity: 0, duration: 0.6, ease: "back.out(1.6)", transformOrigin: "left center" }, 8.2);
+tl.to("#s2 .pain, #s2 h2", { x: -1100, duration: 0.5, ease: "power2.in", stagger: 0.05 }, 9.2);
+hide("#s2", 9.5, 0.2);
+
+/* S3 9.6 to 12.8 brand */
+show("#s3", 9.6);
+tl.from("#s3", { clipPath: "circle(0% at 50% 43%)", duration: 0.7, ease: EI }, 9.6);
+tl.from("#s3 .mark", { scale: 0, rotation: -20, duration: 0.8, ease: "back.out(1.7)" }, 9.9);
+["r1", "r2", "r3"].forEach((r, i) => tl.fromTo(`#s3 .${r}`, { scale: 0.6, opacity: 0.9 }, { scale: 4, opacity: 0, duration: 1.8, ease: "power2.out" }, 10 + i * 0.35));
+tl.from("#s3 .name span", { y: 100, opacity: 0, duration: 0.6, ease: E, stagger: 0.15 }, 10.4);
+tl.from("#s3 .tl", { y: 40, opacity: 0, duration: 0.6, ease: E }, 10.9);
+tl.to("#s3", { yPercent: -100, duration: 0.6, ease: EI }, 12.3);
+
+/* S4 12.6 to 19.8 rooms */
+show("#s4", 12.3);
+tl.from("#s4 h2", { y: 60, opacity: 0, duration: 0.6, ease: E }, 12.6);
+tl.set("#r2, #r3", { x: 1100 }, 0);
+tl.from("#r1", { y: 400, opacity: 0, duration: 0.8, ease: E }, 12.7);
+tl.from("#r1 img", { scale: 1.2, duration: 2.6, ease: "power1.out" }, 12.7);
+tl.from("#s4 .incl span", { y: 60, opacity: 0, scale: 0.8, duration: 0.5, ease: "back.out(2)", stagger: 0.12 }, 13.3);
+tl.to("#r1", { x: -1100, duration: 0.7, ease: EI }, 15.0);
+tl.to("#r2", { x: 0, duration: 0.7, ease: EI }, 15.0);
+tl.from("#r2 img", { scale: 1.2, duration: 2.4, ease: "power1.out" }, 15.0);
+tl.to("#r2", { x: -1100, duration: 0.7, ease: EI }, 17.2);
+tl.to("#r3", { x: 0, duration: 0.7, ease: EI }, 17.2);
+tl.from("#r3 img", { scale: 1.2, duration: 2.4, ease: "power1.out" }, 17.2);
+hide("#s4", 19.4, 0.4);
+
+/* S5 19.8 to 25.6 life */
+show("#s5", 19.6);
+tl.fromTo("#s5", { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, 19.6);
+tl.from("#s5 h2", { y: 60, opacity: 0, duration: 0.6, ease: E }, 19.8);
+tl.from("#s5 .tile", { scale: 0.7, opacity: 0, duration: 0.7, ease: "back.out(1.4)", stagger: 0.18 }, 20.1);
+tl.from("#s5 .tile img", { scale: 1.25, duration: 4.5, ease: "power1.out", stagger: 0.18 }, 20.1);
+tl.from("#s5 .promise", { y: 500, duration: 0.8, ease: "back.out(1.1)" }, 22.4);
+tl.from("#s5 .promise i", { rotation: -180, scale: 0, duration: 0.7, ease: "back.out(2)" }, 22.8);
+hide("#s5", 25.3, 0.35);
+
+/* S6 25.6 to 32 automation */
+show("#s6", 25.5);
+tl.fromTo("#s6", { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, 25.5);
+tl.from("#s6 h2, #s6 .sub", { y: 50, opacity: 0, duration: 0.6, ease: E, stagger: 0.12 }, 25.6);
+tl.from("#s6 .phone", { y: 900, duration: 0.9, ease: "power4.out" }, 25.7);
+document.querySelectorAll("#s6 .msg").forEach((m, i) => {
+  const t = 26.6 + i * 0.75;
+  tl.to(m, { maxHeight: 360, opacity: 1, marginTop: 14, duration: 0.45, ease: E }, t);
+  tl.from(m.querySelector(".inner"), { y: 30, duration: 0.45, ease: E }, t);
+});
+tl.from("#c1", { x: -560, duration: 0.6, ease: "back.out(1.4)" }, 27.0);
+tl.to("#c1", { x: -560, duration: 0.5, ease: "power2.in" }, 28.4);
+tl.from("#c2", { x: 560, duration: 0.6, ease: "back.out(1.4)" }, 28.7);
+tl.to("#c2", { x: 560, duration: 0.5, ease: "power2.in" }, 30.0);
+tl.from("#c3", { x: -560, duration: 0.6, ease: "back.out(1.4)" }, 30.4);
+hide("#s6", 31.7, 0.35);
+
+/* S7 32 to 37 CTA */
+show("#s7", 31.9);
+tl.from("#s7", { clipPath: "inset(100% 0 0 0)", duration: 0.6, ease: EI }, 31.9);
+tl.from("#s7 .photo", { y: 100, opacity: 0, duration: 0.7, ease: E }, 32.2);
+tl.fromTo("#s7img", { scale: 1.2 }, { scale: 1.02, duration: 4.8, ease: "none" }, 32.2);
+tl.from("#s7 h2", { y: 80, opacity: 0, duration: 0.6, ease: E }, 32.5);
+tl.from("#s7 .pts div", { x: -60, opacity: 0, duration: 0.5, ease: E, stagger: 0.15 }, 32.9);
+tl.from("#s7 .cta", { scale: 0.6, opacity: 0, duration: 0.6, ease: "back.out(1.8)" }, 33.5);
+tl.to("#s7 .cta", { scale: 1.05, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 3 }, 34.2);
+tl.from("#s7 .dm", { y: 30, opacity: 0, duration: 0.5, ease: E }, 34.0);
+tl.from("#s7 .foot", { opacity: 0, duration: 0.5 }, 34.4);
+tl.set({}, {}, DUR);
+
+/* Rendering hook: the renderer seeks frame by frame */
+window.__seek = (t) => { tl.seek(t, false); return true; };
+window.__duration = DUR;
+window.__ready = false;
+Promise.all([document.fonts.ready, ...[...document.images].map((i) => i.complete ? 1 : new Promise((r) => { i.onload = i.onerror = r; }))])
+  .then(() => new Promise((r) => setTimeout(r, 600)))
+  .then(() => { window.__ready = true; if (!RENDER) play(); });
+
+function fit() { if (RENDER) return; const s = Math.min(innerWidth / 1080, innerHeight / 1920); document.getElementById("stage").style.transform = `scale(${s})`; document.getElementById("stage").style.margin = `${(1920 * s - 1920) / 2}px ${(1080 * s - 1080) / 2}px`; }
+addEventListener("resize", fit); fit();
+function play() { tl.restart(); }
+tl.eventCallback("onUpdate", () => { document.getElementById("bar").style.width = (tl.progress() * 100) + "%"; });
+document.addEventListener("click", () => !RENDER && play());
+</script>
+</body>
+</html>
