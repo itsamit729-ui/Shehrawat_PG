@@ -15,7 +15,7 @@ A TypeScript API on Fastify and Aiven MySQL, deployed separately from the React 
 
 Routes in the contract that aren't built return 404.
 
-**Not yet verified against MySQL.** The code compiles and the unit tests pass, but the 58 database tests, the migrations and all the SQL have never run on a real server. Treat "built" above as unproven until they pass.
+**Verified on MySQL 8.4 in CI, not yet on Aiven.** All tests and migrations pass against a stock MySQL server in GitHub Actions. Aiven's TLS and default settings, and the app running on Render, are still untested.
 
 ## Changes from the blueprint
 
