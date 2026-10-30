@@ -72,7 +72,10 @@ describe.skipIf(!DATABASE_URL)("platform", () => {
     it("never gives one job to two concurrent claimers", async () => {
       for (let i = 0; i < 6; i++) await enqueueJob(h.db, { kind: "noop", dedupeKey: String(i) });
       const claims = await Promise.all([claimJobs(h.db, 4), claimJobs(h.db, 4), claimJobs(h.db, 4)]);
+      // SKIP LOCKED may leave a claimer empty-handed for this round, so also drain what's left.
       const ids = claims.flat().map((j) => j.id);
+      for (let batch = await claimJobs(h.db, 4); batch.length; batch = await claimJobs(h.db, 4))
+        ids.push(...batch.map((j) => j.id));
       expect(new Set(ids).size).toBe(ids.length);
       expect(ids).toHaveLength(6);
     });
