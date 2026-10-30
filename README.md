@@ -11,5 +11,6 @@ The frontend and backend deploy separately. `VITE_DEMO_MODE=true` enables the cl
 - [Frontend setup, screens and deployment](./frontend/README.md)
 - [Backend API contract](./frontend/API_CONTRACT.md)
 - [Automated frontend checks](./.github/workflows/frontend-ci.yml)
+- [Backend service: status, setup and deployment](./backend/README.md)
 
 The frontend includes public property discovery and booking, owner/resident/corporate portals, billing views, support, WhatsApp inbox/campaign controls, signing UI and reports. Real authentication, locks, ledger postings, payments, messaging and signing are backend integrations; the browser preview does not perform them.

@@ -1,0 +1,35 @@
+{
+  "name": "sehrawat-pg-backend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=.env src/server.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "migrate": "node --env-file-if-exists=.env --import tsx src/cli/migrate.ts",
+    "seed:dev": "node --env-file-if-exists=.env --import tsx src/cli/seed-dev.ts",
+    "create-owner": "node --env-file-if-exists=.env --import tsx src/cli/create-owner.ts"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.1.5",
+    "@fastify/cors": "^11.3.1",
+    "@fastify/helmet": "^13.2.0",
+    "@node-rs/argon2": "^2.2.2",
+    "fastify": "^5.12.7",
+    "kysely": "^0.29.7",
+    "mysql2": "^3.24.6",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.0",
+    "vitest": "^5.0.5"
+  }
+}

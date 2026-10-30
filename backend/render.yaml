@@ -1,0 +1,36 @@
+# Separate from the frontend Blueprint at the repository root. Nothing here has been deployed.
+# Point a new Blueprint at this file. Secrets are entered in Render, never committed.
+services:
+  - type: web
+    name: sehrawat-pg-backend
+    runtime: node
+    rootDir: backend
+    # Free sleeps when idle, which stops scheduled jobs and misses callbacks: demos only.
+    # Choose an always-on plan before taking live bookings.
+    plan: free
+    # devDependencies are needed to compile TypeScript during the build.
+    buildCommand: npm ci --include=dev && npm run build
+    # Free has no pre-deploy step, so migrations run at start. The migrator takes a lock.
+    startCommand: node dist/cli/migrate.js && node dist/server.js
+    healthCheckPath: /readyz
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: DB_CA_CERT
+        sync: false
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: FRONTEND_ORIGINS
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: COOKIE_DOMAIN
+        sync: false
+      - key: SMS_PROVIDER
+        sync: false
+      - key: MAIL_PROVIDER
+        sync: false
