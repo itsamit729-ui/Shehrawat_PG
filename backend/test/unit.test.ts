@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { loadConfig } from "../src/config.js";
+import { migrationChecksum } from "../src/db/migrate.js";
 import { HttpError } from "../src/http/errors.js";
 import {
   csrfTokenFor,
@@ -98,6 +99,17 @@ describe("idempotency keys", () => {
     );
     expect(() => requireIdempotencyKey("abc")).toThrow(HttpError);
     expect(() => requireIdempotencyKey(undefined)).toThrow(HttpError);
+  });
+});
+
+describe("migration checksums", () => {
+  it("match across Windows and Linux line endings", () => {
+    expect(migrationChecksum("CREATE TABLE a;\r\nCREATE TABLE b;\r\n")).toBe(
+      migrationChecksum("CREATE TABLE a;\nCREATE TABLE b;\n"),
+    );
+  });
+  it("still notice a real edit", () => {
+    expect(migrationChecksum("CREATE TABLE a;\n")).not.toBe(migrationChecksum("CREATE TABLE b;\n"));
   });
 });
 

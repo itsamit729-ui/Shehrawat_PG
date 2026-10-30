@@ -9,6 +9,11 @@ import { createMigrationConnection } from "./client.js";
 const DIRECTORY = fileURLToPath(new URL("../../migrations/", import.meta.url));
 const LOCK_NAME = "sehrawat_schema_migrations";
 
+/** Ignores line endings: git checks these files out as CRLF on Windows and LF on Linux. */
+export function migrationChecksum(text: string) {
+  return createHash("sha256").update(text.replaceAll("\r\n", "\n")).digest("hex");
+}
+
 /** Applies pending SQL files in name order. Returns the names it applied. */
 export async function migrate(config: Config["db"], log: (line: string) => void = () => {}) {
   const connection = createMigrationConnection(config);
@@ -27,7 +32,7 @@ export async function migrate(config: Config["db"], log: (line: string) => void 
     const files = (await readdir(DIRECTORY)).filter((f) => f.endsWith(".sql")).sort();
     for (const file of files) {
       const text = await readFile(join(DIRECTORY, file), "utf8");
-      const checksum = createHash("sha256").update(text).digest("hex");
+      const checksum = migrationChecksum(text);
       const previous = known.get(file);
       if (previous) {
         if (previous !== checksum)
