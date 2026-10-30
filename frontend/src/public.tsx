@@ -969,6 +969,7 @@ export function LoginPage() {
   const { session, loginDemo, login } = useApp();
   const navigate = useNavigate();
   const from = (useLocation().state as { from?: string } | null)?.from;
+  const ownerByOtp = import.meta.env.VITE_OWNER_LOGIN !== "password";
   const [role, setRole] = useState<Role>("resident");
   const [challenge, setChallenge] = useState("");
   const [error, setError] = useState("");
@@ -1052,7 +1053,7 @@ export function LoginPage() {
                   new FormData(e.currentTarget),
                 ) as Record<string, string>;
                 try {
-                  if (role === "owner" && !challenge) {
+                  if (role === "owner" && ownerByOtp && !challenge) {
                     const r = await request<{ challengeId: string }>(
                       "/auth/otp/request",
                       { method: "POST", body: { phone: v.phone } },
@@ -1069,7 +1070,16 @@ export function LoginPage() {
             >
               <Fields
                 fields={
-                  role === "owner"
+                  role === "owner" && !ownerByOtp
+                    ? [
+                        {
+                          name: "password",
+                          label: "Owner password",
+                          type: "password",
+                          required: true,
+                        },
+                      ]
+                    : role === "owner"
                     ? challenge
                       ? [
                           {
@@ -1107,7 +1117,7 @@ export function LoginPage() {
               <button className="btn full-width" disabled={busy}>
                 {busy
                   ? "Please wait…"
-                  : role === "owner" && !challenge
+                  : role === "owner" && ownerByOtp && !challenge
                     ? "Send verification code"
                     : "Sign in"}
                 <ArrowRight size={16} />

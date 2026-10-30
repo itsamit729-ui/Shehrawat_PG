@@ -11,6 +11,7 @@ import {
   revokeSession,
   setPasswordWithToken,
   verifyOwnerOtp,
+  verifyOwnerPassword,
   verifyPasswordLogin,
   type Context,
   type SessionUser,
@@ -29,6 +30,7 @@ const login = z.discriminatedUnion("role", [
     password: z.string().min(1).max(128),
   }),
 ]);
+const ownerPassword = z.object({ password: z.string().min(1, "Enter your password.").max(128) });
 const recover = z.object({ email: z.email().max(254) });
 const setPassword = z.object({ token: z.string().min(16).max(128), password: z.string().min(1).max(128) });
 
@@ -51,16 +53,22 @@ export function identityRoutes(app: FastifyInstance, opts: { config: Config; ctx
   });
 
   app.post("/auth/login", async (request, reply) => {
-    const body = login.parse(request.body);
-    const userId =
-      body.role === "owner"
-        ? await verifyOwnerOtp(ctx, businessId, body.challengeId, body.otp)
-        : await verifyPasswordLogin(ctx, businessId, {
-            role: body.role,
-            email: body.email,
-            password: body.password,
-            ip: request.ip,
-          });
+    let userId: string;
+    if (config.ownerLogin === "password" && (request.body as { role?: unknown } | null)?.role === "owner") {
+      const { password } = ownerPassword.parse(request.body);
+      userId = await verifyOwnerPassword(ctx, businessId, password, request.ip);
+    } else {
+      const body = login.parse(request.body);
+      userId =
+        body.role === "owner"
+          ? await verifyOwnerOtp(ctx, businessId, body.challengeId, body.otp)
+          : await verifyPasswordLogin(ctx, businessId, {
+              role: body.role,
+              email: body.email,
+              password: body.password,
+              ip: request.ip,
+            });
+    }
     const { token, maxAgeSeconds } = await createSession(ctx, userId, request.cookies.sg_session);
     setSessionCookie(config, reply, token, maxAgeSeconds);
     const user = await lookupSession(ctx, token);

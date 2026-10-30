@@ -12,7 +12,7 @@ import type { Providers } from "../src/providers/index.js";
 export const DATABASE_URL = process.env.TEST_DATABASE_URL;
 export const ORIGIN = "http://localhost:5173";
 
-export const testConfig = () =>
+export const testConfig = (env: Record<string, string> = {}) =>
   loadConfig({
     NODE_ENV: "test",
     DATABASE_URL: DATABASE_URL!,
@@ -23,6 +23,7 @@ export const testConfig = () =>
     FRONTEND_ORIGINS: ORIGIN,
     FRONTEND_URL: ORIGIN,
     TRUST_PROXY_HOPS: "0",
+    ...env,
   });
 
 const TABLES = [
@@ -51,8 +52,8 @@ export interface Harness {
 export const flush = () => new Promise((r) => setTimeout(r, 25));
 
 /** Wipes the test database and builds an app with one owner, and one property with `beds` double beds. */
-export async function createHarness(beds = 3): Promise<Harness> {
-  const config = testConfig();
+export async function createHarness(beds = 3, env: Record<string, string> = {}): Promise<Harness> {
+  const config = testConfig(env);
   await migrate(config.db);
   const db = createDb(config.db);
   for (const table of TABLES) await sql`DELETE FROM ${sql.table(table)}`.execute(db);

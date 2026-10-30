@@ -39,3 +39,6 @@ services:
         value: log
       - key: MAIL_PROVIDER
         value: log
+      # Stopgap: the owner signs in with a password until SMS is available.
+      - key: OWNER_LOGIN
+        value: password

@@ -44,7 +44,7 @@ npm ci
 cp .env.example .env        # then set DATABASE_URL and AUTH_SECRET
 npm run migrate
 npm run seed:dev            # sample properties and 500 beds; refused in production
-npm run create-owner -- --phone 98XXXXXXXX --name "Owner name"
+npm run create-owner -- --name "Owner name"     # prints the owner password once
 npm run dev
 ```
 
@@ -74,6 +74,7 @@ Built in-house, using no third-party auth service.
 
 | Concern | Behaviour |
 |---|---|
+| Owner sign-in, stopgap | With `OWNER_LOGIN=password`, a generated password with no phone or email. Move back to SMS by setting `otp` here and `VITE_OWNER_LOGIN=otp` on the frontend. |
 | Owner sign-in | 6-digit SMS code, 5-minute expiry, 5 attempts, one send per 60 seconds, daily limits per phone and IP. Stored as a keyed hash. A new code cancels the old one. |
 | Resident and corporate sign-in | Invitation link, then a password of 12+ characters hashed with Argon2id. |
 | Sessions | Random token in an HttpOnly cookie; only its hash is stored. Owners: 30 minutes idle, 12 hours absolute. Others: 24 hours idle, 7 days absolute. Rotated on login, revoked on logout and password reset. |

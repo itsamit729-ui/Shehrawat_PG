@@ -62,6 +62,8 @@ const calls = (path: string) =>
 beforeEach(() => {
   signedIn = true;
   api.overrides = {};
+  vi.unstubAllEnvs();
+  vi.stubEnv("VITE_OWNER_LOGIN", "otp");
   api.request.mockReset();
   api.request.mockImplementation((path: string) => {
     if (api.overrides[path]) return api.overrides[path]();
@@ -185,6 +187,27 @@ describe("live mode sign-in", () => {
     await signInAsOwner();
     await screen.findByRole("heading", { name: "A good day starts here." });
     expect(window.location.pathname).toBe("/owner/overview");
+  });
+});
+
+describe("owner sign-in without SMS", () => {
+  it("asks only for a password, and never requests a code", async () => {
+    vi.stubEnv("VITE_OWNER_LOGIN", "password");
+    signedIn = false;
+    window.history.replaceState({}, "", "/owner/residents");
+    render(<App />);
+    await screen.findByRole("heading", { name: "Good to see you." });
+    await userEvent.click(screen.getByRole("button", { name: "owner" }));
+    expect(screen.queryByLabelText(/Owner mobile number/)).toBeNull();
+    await userEvent.type(screen.getByLabelText(/Owner password/), "secret-value");
+    await userEvent.click(screen.getByRole("button", { name: /Sign in/ }));
+    await screen.findByRole("heading", { name: "People make a place." });
+    expect(calls("/auth/otp/request")).toBe(0);
+    const login = api.request.mock.calls.find(([p]) => p === "/auth/login");
+    expect(login?.[1].body).toMatchObject({
+      role: "owner",
+      password: "secret-value",
+    });
   });
 });
 

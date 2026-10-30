@@ -179,6 +179,26 @@ export async function verifyOwnerOtp(ctx: Context, businessId: string, challenge
   return userId;
 }
 
+// ---- Owner password, the stopgap for when SMS isn't available ----
+
+export async function verifyOwnerPassword(ctx: Context, businessId: string, password: string, ip: string) {
+  // The second limit counts every address, because there is no account name for a guesser to supply.
+  await consumeLimits(ctx.db, ctx.secret, [
+    { scope: "owner-login-ip", subject: ip, max: 10, seconds: 15 * MINUTE },
+    { scope: "owner-login-all", subject: businessId, max: 30, seconds: 15 * MINUTE },
+  ]);
+  const owner = await ctx.db
+    .selectFrom("users")
+    .select(["id", "password_hash"])
+    .where("business_id", "=", businessId)
+    .where("role", "=", "owner")
+    .where("status", "=", "active")
+    .executeTakeFirst();
+  const matched = await verifyPassword(owner?.password_hash ?? null, password);
+  if (!owner || !matched) throw new HttpError(401, BAD_LOGIN);
+  return owner.id;
+}
+
 // ---- Password login ----
 
 export async function verifyPasswordLogin(
