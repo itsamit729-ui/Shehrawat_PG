@@ -64,7 +64,7 @@ TEST_DATABASE_URL=mysql://root:password@127.0.0.1:3306/sehrawat_test npm test
 
 1. Create the Aiven MySQL service, then set `DATABASE_URL` to its Service URI and `DB_CA_CERT` to the project CA certificate.
 2. Run `npm run migrate` and `npm run create-owner` once from a trusted machine with those settings. The server refuses to start until the business row exists.
-3. Implement real SMS and email adapters in `src/providers`. **Production refuses to start until this is done**, because the `dev` providers print codes and links.
+3. Set `SMS_PROVIDER` and `MAIL_PROVIDER`. Until real adapters exist in `src/providers`, the only value production accepts is `log`, which sends nothing and prints codes and links to the service logs. **Anyone who can read those logs can sign in as anyone, so don't use it for real customers.** Production refuses `dev`.
 4. Use `app.YOUR-DOMAIN` and `api.YOUR-DOMAIN`, with `COOKIE_DOMAIN=.YOUR-DOMAIN`. Separate `onrender.com` hostnames count as cross-site, and browsers may block the login cookie.
 5. Set `TRUST_PROXY_HOPS` to the real number of proxies and confirm logged client IPs are correct. If it's wrong, every visitor can share one IP's rate limit.
 

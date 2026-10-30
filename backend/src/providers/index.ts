@@ -14,17 +14,20 @@ export interface Providers {
   mail: MailProvider;
 }
 
-/** Local development only: config refuses to start production with these. */
+/**
+ * Prints instead of sending, for both "dev" (local only) and "log" (the stopgap allowed in
+ * production). Anyone who can read the logs can use these codes and links to sign in.
+ */
 export function createProviders(_config: Config): Providers {
   return {
     sms: {
       async sendOtp(phone, code) {
-        console.info(`[dev sms] ${phone}: your Sehrawat PG code is ${code}`);
+        console.info(`[sms not sent] ${phone}: your Sehrawat PG code is ${code}`);
       },
     },
     mail: {
       async sendPasswordLink({ to, purpose, url }) {
-        console.info(`[dev mail] ${to} (${purpose}): ${url}`);
+        console.info(`[email not sent] ${to} (${purpose}): ${url}`);
       },
     },
   };

@@ -7,6 +7,8 @@ import { startJobRunner } from "./jobs/runner.js";
 const config = loadConfig();
 const db = createDb(config.db);
 const app = await buildApp({ config, db });
+if (config.production && config.logsAuthSecrets)
+  app.log.warn("SMS and email are not being sent: login codes and password links are printed to these logs.");
 
 const stopJobs = config.jobRunnerEnabled
   ? startJobRunner(db, housekeepingHandlers(db), app.log, () => scheduleHousekeeping(db))

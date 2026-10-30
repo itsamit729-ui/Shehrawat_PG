@@ -14,8 +14,9 @@ const schema = z.object({
   COOKIE_SAMESITE: z.enum(["lax", "strict", "none"]).default("lax"),
   TRUST_PROXY_HOPS: z.coerce.number().int().min(0).default(1),
   BUSINESS_SLUG: z.string().min(1).default("sehrawat"),
-  SMS_PROVIDER: z.enum(["dev"]).default("dev"),
-  MAIL_PROVIDER: z.enum(["dev"]).default("dev"),
+  // "log" prints codes and links to the service logs: a stopgap until real providers exist.
+  SMS_PROVIDER: z.enum(["dev", "log"]).default("dev"),
+  MAIL_PROVIDER: z.enum(["dev", "log"]).default("dev"),
   JOB_RUNNER_ENABLED: z
     .enum(["true", "false"])
     .default("true")
@@ -61,6 +62,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env) {
       sameSite: c.COOKIE_SAMESITE,
       secure: production || c.COOKIE_SAMESITE === "none",
     },
+    logsAuthSecrets: c.SMS_PROVIDER === "log" || c.MAIL_PROVIDER === "log",
     trustProxyHops: c.TRUST_PROXY_HOPS,
     businessSlug: c.BUSINESS_SLUG,
     jobRunnerEnabled: c.JOB_RUNNER_ENABLED,

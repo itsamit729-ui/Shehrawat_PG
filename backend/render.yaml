@@ -4,6 +4,7 @@ services:
   - type: web
     name: sehrawat-pg-backend
     runtime: node
+    region: singapore
     rootDir: backend
     # Free sleeps when idle, which stops scheduled jobs and misses callbacks: demos only.
     # Choose an always-on plan before taking live bookings.
@@ -28,9 +29,13 @@ services:
         sync: false
       - key: FRONTEND_URL
         sync: false
-      - key: COOKIE_DOMAIN
+      # "none" while on onrender.com. With your own domain, use "lax" and add COOKIE_DOMAIN.
+      - key: COOKIE_SAMESITE
         sync: false
+      - key: TRUST_PROXY_HOPS
+        value: "1"
+      # Stopgap: prints login codes and password links to the logs instead of sending them.
       - key: SMS_PROVIDER
-        sync: false
+        value: log
       - key: MAIL_PROVIDER
-        sync: false
+        value: log

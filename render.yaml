@@ -10,7 +10,7 @@ services:
       - key: NODE_VERSION
         value: "24"
       - key: VITE_DEMO_MODE
-        value: "true"
+        value: "false"
       - key: VITE_API_BASE_URL
         sync: false
     routes:

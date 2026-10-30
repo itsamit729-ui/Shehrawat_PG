@@ -117,4 +117,11 @@ describe("configuration", () => {
   it("refuses production with the dev SMS and mail printers", () => {
     expect(() => loadConfig({ ...baseEnv, NODE_ENV: "production", DB_CA_CERT: "pem" })).toThrow(/dev SMS/);
   });
+  it("allows the log providers in production only when chosen by name", () => {
+    const production = { ...baseEnv, NODE_ENV: "production", DB_CA_CERT: "pem" };
+    const chosen = loadConfig({ ...production, SMS_PROVIDER: "log", MAIL_PROVIDER: "log" });
+    expect(chosen.logsAuthSecrets).toBe(true);
+    expect(() => loadConfig({ ...production, SMS_PROVIDER: "log" })).toThrow(/dev SMS/);
+    expect(() => loadConfig({ ...production, SMS_PROVIDER: "other", MAIL_PROVIDER: "log" })).toThrow(/SMS_PROVIDER/);
+  });
 });
