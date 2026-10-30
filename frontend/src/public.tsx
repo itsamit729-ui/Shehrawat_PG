@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   Link,
   useNavigate,
+  useLocation,
   useParams,
   useSearchParams,
 } from "react-router-dom";
@@ -967,6 +968,7 @@ export function BookingPage() {
 export function LoginPage() {
   const { session, loginDemo, login } = useApp();
   const navigate = useNavigate();
+  const from = (useLocation().state as { from?: string } | null)?.from;
   const [role, setRole] = useState<Role>("resident");
   const [challenge, setChallenge] = useState("");
   const [error, setError] = useState("");
@@ -975,10 +977,13 @@ export function LoginPage() {
   useEffect(() => {
     if (session)
       navigate(
-        `/${session.role}/${session.role === "resident" ? "home" : "overview"}`,
+        // Return to the page that asked for sign-in, if it's this account's own portal.
+        from?.startsWith(`/${session.role}/`)
+          ? from
+          : `/${session.role}/${session.role === "resident" ? "home" : "overview"}`,
         { replace: true },
       );
-  }, [session, navigate]);
+  }, [session, navigate, from]);
   useEffect(() => {
     if (cooldown) {
       const t = setTimeout(() => setCooldown(cooldown - 1), 1000);

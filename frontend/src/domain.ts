@@ -161,7 +161,9 @@ export const money = (n: number) =>
     currency: "INR",
     maximumFractionDigits: 0,
   }).format(n);
-export const today = () => new Date().toISOString().slice(0, 10);
+/** Business dates run on Indian time. UTC is still on yesterday until 05:30 there. */
+export const today = (now = new Date()) =>
+  new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(now);
 export const formatDate = (s: string) =>
   s
     ? new Date(s).toLocaleDateString("en-IN", {

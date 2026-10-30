@@ -6,6 +6,7 @@ import {
   Route,
   Navigate,
   useLocation,
+  useSearchParams,
   Link,
 } from "react-router-dom";
 import { AppProvider, useApp } from "./state";
@@ -54,6 +55,7 @@ class ErrorBoundary extends Component<
     );
   }
 }
+const RECORD_ID = /^[0-9a-f]{8}-[0-9a-f-]{27}$/i;
 function ScrollReset() {
   const location = useLocation();
   React.useEffect(() => {
@@ -63,7 +65,7 @@ function ScrollReset() {
         ? "A little closer to home"
         : location.pathname
             .split("/")
-            .filter(Boolean)
+            .filter((part) => part && !RECORD_ID.test(part))
             .at(-1)
             ?.replaceAll("-", " ") || "Home") + " · Sehrawat PG";
   }, [location.pathname]);
@@ -102,6 +104,32 @@ function Protected({ role, children }: { role: Role; children: ReactNode }) {
     <PortalLayout>
       <Suspense fallback={<Loading />}>{children}</Suspense>
     </PortalLayout>
+  );
+}
+/** Old prototype URLs, which may still be bookmarked or shared. */
+const LEGACY_PAGES: Record<string, string> = {
+  "/index.html": "/",
+  "/explore.html": "/explore",
+  "/owner-dashboard.html": "/owner/overview",
+  "/resident.html": "/resident/home",
+  "/about.html": "/about",
+  "/corporate.html": "/corporate",
+  "/legal.html": "/legal",
+  "/partner.html": "/partner",
+  "/safety.html": "/safety",
+};
+function LegacyRedirect({ to }: { to: string }) {
+  const { search, hash } = useLocation();
+  return <Navigate to={{ pathname: to, search, hash }} replace />;
+}
+function LegacyRecordRedirect({ to, param }: { to: string; param: string }) {
+  const [params] = useSearchParams();
+  const id = params.get(param);
+  return (
+    <Navigate
+      to={id ? `${to}/${encodeURIComponent(id)}` : "/explore"}
+      replace
+    />
   );
 }
 export function App() {
@@ -160,18 +188,20 @@ export function App() {
                 </Protected>
               }
             />
-            <Route path="/index.html" element={<Navigate to="/" replace />} />
+            {Object.entries(LEGACY_PAGES).map(([path, to]) => (
+              <Route
+                key={path}
+                path={path}
+                element={<LegacyRedirect to={to} />}
+              />
+            ))}
             <Route
-              path="/explore.html"
-              element={<Navigate to="/explore" replace />}
+              path="/property.html"
+              element={<LegacyRecordRedirect to="/properties" param="id" />}
             />
             <Route
-              path="/owner-dashboard.html"
-              element={<Navigate to="/owner/overview" replace />}
-            />
-            <Route
-              path="/resident.html"
-              element={<Navigate to="/resident/home" replace />}
+              path="/book.html"
+              element={<LegacyRecordRedirect to="/book" param="property" />}
             />
             <Route path="*" element={<NotFound />} />
           </Routes>

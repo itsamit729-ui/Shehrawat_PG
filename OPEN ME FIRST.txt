@@ -3,7 +3,7 @@ Aangan Living demo website
 1. Unzip this folder (right click > Extract All). Do not open files from inside the zip.
 2. Double click index.html to open the website in Chrome or Edge.
 3. Owner dashboard: owner-dashboard.html (or click 'Owner login' on the website).
-4. Ad previews: marketing/presentation-ad.html (click to replay).
+4. Ad previews: presentation-ad.html (click to replay).
 
 Needs an internet connection for fonts, icons and charts.
 All names and numbers are sample data for the demo.

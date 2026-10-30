@@ -7,8 +7,13 @@ import {
   canReply,
   csvText,
   safeExternalUrl,
+  today,
 } from "../domain";
 describe("business UI rules", () => {
+  it("uses the Indian calendar date, not UTC", () => {
+    expect(today(new Date("2026-10-30T19:00:00Z"))).toBe("2026-10-31");
+    expect(today(new Date("2026-10-30T18:00:00Z"))).toBe("2026-10-30");
+  });
   it("contains exactly 500 bed records and no duplicate IDs", () => {
     const d = seed();
     expect(d.beds).toHaveLength(500);

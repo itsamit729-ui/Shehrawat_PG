@@ -4,6 +4,7 @@ import {
   useEffect,
   useState,
   useCallback,
+  useRef,
   type ReactNode,
 } from "react";
 import { DEMO, request, resetCsrf, ApiError } from "./api";
@@ -46,6 +47,8 @@ interface AppContext {
   reset: () => void;
   sync: (collection: Collection) => Promise<void>;
 }
+const REFRESH_FAILED =
+  "Saved, but the latest data couldn’t be loaded. Please reload the page.";
 const Context = createContext<AppContext>(null!);
 export function useApp() {
   return useContext(Context);
@@ -76,44 +79,81 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(!DEMO);
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
-  const sync = useCallback(async (collection: Collection) => {
-    if (DEMO) return;
-    const records = await request<DataState[Collection]>("/" + collection);
-    setData((old) => ({ ...old, [collection]: records }));
-  }, []);
+  const latestLoad = useRef(0);
   const notify = (s: string) => setToast(s);
+  /** Signs out locally on a 401, so route guards send the user to log in. Always rethrows. */
+  const signOutIfExpired = useCallback((e: unknown): never => {
+    if (e instanceof ApiError && e.status === 401) {
+      resetCsrf();
+      setSession(null);
+      setData((old) => ({ ...empty, properties: old.properties }));
+      setToast("Your session has ended. Please sign in again.");
+    }
+    throw e;
+  }, []);
+  const sync = useCallback(
+    async (collection: Collection) => {
+      if (DEMO) return;
+      const records = await request<DataState[Collection]>(
+        "/" + collection,
+      ).catch(signOutIfExpired);
+      setData((old) => ({ ...old, [collection]: records }));
+    },
+    [signOutIfExpired],
+  );
   useEffect(() => {
     if (toast) {
       const t = setTimeout(() => setToast(""), 5000);
       return () => clearTimeout(t);
     }
   }, [toast]);
-  async function refresh() {
-    if (DEMO) return;
-    setLoading(true);
-    setError("");
+  /**
+   * A background load follows a save: the current screen and its filters, dialogs and selections
+   * stay mounted, and a failure leaves the data on screen. Responses to older loads are discarded.
+   */
+  async function load(background = false) {
+    if (DEMO) return true;
+    const run = ++latestLoad.current;
+    if (!background) {
+      setLoading(true);
+      setError("");
+    }
     try {
       const properties = await request<DataState["properties"]>("/properties");
-      setData({ ...empty, properties });
+      if (!background && run === latestLoad.current)
+        setData({ ...empty, properties });
       let me: Session | null = null;
       try {
         me = await request<Session>("/auth/session");
       } catch (e) {
         if (!(e instanceof ApiError && e.status === 401)) throw e;
       }
+      const scoped = me ? await request<Partial<DataState>>("/portal") : {};
+      if (run !== latestLoad.current) return true;
       setSession(me);
-      if (me) {
-        const scoped = await request<Partial<DataState>>("/portal");
-        setData({ ...empty, ...scoped, properties });
-      }
+      setData({ ...empty, ...scoped, properties });
+      return true;
     } catch (e) {
-      setError((e as Error).message);
+      if (run !== latestLoad.current) return true;
+      if (e instanceof ApiError && e.status === 401) {
+        try {
+          signOutIfExpired(e);
+        } catch {
+          /* Being signed out is the outcome here, not a failure to report. */
+        }
+        return true;
+      }
+      if (!background) setError((e as Error).message);
+      return false;
     } finally {
-      setLoading(false);
+      if (run === latestLoad.current) setLoading(false);
     }
   }
+  async function refresh() {
+    await load();
+  }
   useEffect(() => {
-    void refresh();
+    void load();
   }, []);
   function loginDemo(role: Role) {
     if (!DEMO) return;
@@ -136,10 +176,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       body: payload,
     });
     setSession(result.user);
-    await refresh();
+    await load();
   }
   async function logout() {
     if (!DEMO) await request("/auth/logout", { method: "POST" });
+    // A load still in flight must not sign this user back in when it finishes.
+    latestLoad.current++;
+    setLoading(false);
     resetCsrf();
     setSession(null);
     if (!DEMO) setData({ ...empty, properties: data.properties });
@@ -155,9 +198,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
           body: value,
           key: crypto.randomUUID(),
         },
-      );
-      await refresh();
-      notify("Changes saved.");
+      ).catch(signOutIfExpired);
+      notify((await load(true)) ? "Changes saved." : REFRESH_FAILED);
       return;
     }
     const row = { ...value, id: value.id || crypto.randomUUID() };
@@ -177,9 +219,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         method: "POST",
         body: payload,
         key: crypto.randomUUID(),
-      });
-      await refresh();
-      notify("Request submitted.");
+      }).catch(signOutIfExpired);
+      notify((await load(true)) ? "Request submitted." : REFRESH_FAILED);
       return result;
     }
     if (name === "payments/manual") {
@@ -262,6 +303,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         save,
         action,
         reset: () => {
+          if (!DEMO) return;
           setData(seed());
           notify("Sample data reset.");
         },
