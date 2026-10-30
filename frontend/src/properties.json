@@ -1,0 +1,245 @@
+[
+  {
+    "id": "cyber-nest",
+    "name": "Aangan Cyber Nest",
+    "area": "DLF Phase 3",
+    "sector": "Near Cyber Hub",
+    "gender": "Men",
+    "audience": "Professionals",
+    "food": true,
+    "ac": true,
+    "rating": 4.7,
+    "reviews": 212,
+    "img": "assets/img/hero-lounge.jpg",
+    "gallery": ["hero-lounge", "room-double", "dining", "gym", "laundry"],
+    "landmarks": [
+      ["DLF Cyber Hub", "6 min walk"],
+      ["Cyber City Rapid Metro", "4 min walk"],
+      ["Ambience Mall", "9 min drive"],
+      ["IGI Airport", "22 min drive"]
+    ],
+    "rooms": {
+      "single": { "price": 21499, "left": 2 },
+      "double": { "price": 14299, "left": 5 },
+      "triple": { "price": 10799, "left": 0 }
+    },
+    "amenities": [
+      "wifi",
+      "food",
+      "ac",
+      "gym",
+      "laundry",
+      "housekeeping",
+      "power",
+      "cctv"
+    ],
+    "beds": 96,
+    "occupied": 89,
+    "blurb": "Walk to Cyber Hub. Built for people who work late, with 24 hour cafe access and quiet floors."
+  },
+  {
+    "id": "lotus",
+    "name": "Aangan Lotus",
+    "area": "Sector 45",
+    "sector": "Near HUDA City Centre Metro",
+    "gender": "Women",
+    "audience": "Professionals",
+    "food": true,
+    "ac": true,
+    "rating": 4.8,
+    "reviews": 168,
+    "img": "assets/img/room-premium.jpg",
+    "gallery": [
+      "room-premium",
+      "room-single-2",
+      "living-3",
+      "kitchen",
+      "dining"
+    ],
+    "landmarks": [
+      ["HUDA City Centre Metro", "7 min walk"],
+      ["Artemis Hospital", "8 min drive"],
+      ["Galleria Market", "10 min drive"],
+      ["Cyber City", "18 min drive"]
+    ],
+    "rooms": {
+      "single": { "price": 18999, "left": 1 },
+      "double": { "price": 12799, "left": 3 },
+      "triple": { "price": 9499, "left": 4 }
+    },
+    "amenities": [
+      "wifi",
+      "food",
+      "ac",
+      "laundry",
+      "housekeeping",
+      "power",
+      "cctv",
+      "biometric"
+    ],
+    "beds": 72,
+    "occupied": 70,
+    "blurb": "Women only residence with a female warden, biometric entry and a 7 minute walk to the Metro."
+  },
+  {
+    "id": "orchid",
+    "name": "Aangan Orchid",
+    "area": "Sohna Road, Sector 49",
+    "sector": "Near Omaxe City Centre",
+    "gender": "Unisex",
+    "audience": "Professionals",
+    "food": true,
+    "ac": true,
+    "rating": 4.6,
+    "reviews": 134,
+    "img": "assets/img/living-1.jpg",
+    "gallery": [
+      "living-1",
+      "room-double-2",
+      "room-single",
+      "common-room",
+      "food-thali"
+    ],
+    "landmarks": [
+      ["Omaxe City Centre", "5 min walk"],
+      ["Vatika Business Park", "6 min drive"],
+      ["Subhash Chowk", "9 min drive"],
+      ["Golf Course Ext Road", "12 min drive"]
+    ],
+    "rooms": {
+      "single": { "price": 17499, "left": 3 },
+      "double": { "price": 11999, "left": 6 },
+      "triple": { "price": 8999, "left": 2 }
+    },
+    "amenities": [
+      "wifi",
+      "food",
+      "ac",
+      "laundry",
+      "housekeeping",
+      "power",
+      "cctv",
+      "coworking"
+    ],
+    "beds": 120,
+    "occupied": 104,
+    "blurb": "Separate floors for men and women, a rooftop coworking lounge and weekend community events."
+  },
+  {
+    "id": "banyan",
+    "name": "Aangan Banyan",
+    "area": "Udyog Vihar Phase 4",
+    "sector": "Near Genpact and Accenture",
+    "gender": "Men",
+    "audience": "Professionals",
+    "food": true,
+    "ac": false,
+    "rating": 4.4,
+    "reviews": 97,
+    "img": "assets/img/room-triple.jpg",
+    "gallery": ["room-triple", "room-double", "dining", "laundry", "coworking"],
+    "landmarks": [
+      ["Udyog Vihar Phase 4", "3 min walk"],
+      ["Moulsari Avenue Rapid Metro", "12 min drive"],
+      ["NH 48", "6 min drive"],
+      ["Cyber City", "10 min drive"]
+    ],
+    "rooms": {
+      "single": { "price": 15499, "left": 0 },
+      "double": { "price": 10499, "left": 4 },
+      "triple": { "price": 7999, "left": 7 }
+    },
+    "amenities": ["wifi", "food", "laundry", "housekeeping", "power", "cctv"],
+    "beds": 84,
+    "occupied": 71,
+    "blurb": "Value pick for BPO and IT teams. Night shift friendly meal timings and cab pickup point at the gate."
+  },
+  {
+    "id": "tulsi",
+    "name": "Aangan Tulsi",
+    "area": "Golf Course Road, Sector 54",
+    "sector": "Near Sector 54 Chowk Metro",
+    "gender": "Women",
+    "audience": "Professionals",
+    "food": true,
+    "ac": true,
+    "rating": 4.9,
+    "reviews": 81,
+    "img": "assets/img/room-premium-2.jpg",
+    "gallery": [
+      "room-premium-2",
+      "room-single-2",
+      "lounge-2",
+      "gym",
+      "kitchen"
+    ],
+    "landmarks": [
+      ["Sector 54 Chowk Rapid Metro", "5 min walk"],
+      ["One Horizon Center", "8 min drive"],
+      ["Golf Course Road offices", "6 min drive"],
+      ["Worldmark", "14 min drive"]
+    ],
+    "rooms": {
+      "single": { "price": 24999, "left": 2 },
+      "double": { "price": 15999, "left": 1 },
+      "triple": { "price": 11499, "left": 0 }
+    },
+    "amenities": [
+      "wifi",
+      "food",
+      "ac",
+      "gym",
+      "laundry",
+      "housekeeping",
+      "power",
+      "cctv",
+      "biometric"
+    ],
+    "beds": 48,
+    "occupied": 46,
+    "blurb": "Premium women only rooms on Golf Course Road with a gym, private balconies and a chef led kitchen."
+  },
+  {
+    "id": "neem",
+    "name": "Aangan Neem",
+    "area": "Sector 14",
+    "sector": "Near Old Gurgaon colleges",
+    "gender": "Unisex",
+    "audience": "Students",
+    "food": true,
+    "ac": false,
+    "rating": 4.5,
+    "reviews": 143,
+    "img": "assets/img/room-study.jpg",
+    "gallery": [
+      "room-study",
+      "room-triple",
+      "residents-work",
+      "dining",
+      "food-curry"
+    ],
+    "landmarks": [
+      ["Sector 14 Market", "4 min walk"],
+      ["Government College Sector 14", "8 min walk"],
+      ["IFFCO Chowk Metro", "11 min drive"],
+      ["Sadar Bazaar", "9 min drive"]
+    ],
+    "rooms": {
+      "single": { "price": 13999, "left": 1 },
+      "double": { "price": 9799, "left": 5 },
+      "triple": { "price": 7499, "left": 9 }
+    },
+    "amenities": [
+      "wifi",
+      "food",
+      "laundry",
+      "housekeeping",
+      "power",
+      "cctv",
+      "study"
+    ],
+    "beds": 110,
+    "occupied": 92,
+    "blurb": "Student friendly with study rooms, exam time quiet hours and parent updates on WhatsApp."
+  }
+]
