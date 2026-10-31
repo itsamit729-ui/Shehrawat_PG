@@ -23,6 +23,7 @@ import {
 } from "./public";
 import type { Role } from "./domain";
 import "./styles.css";
+import "./premium.css";
 import { PaymentStatus, SetPassword } from "./account";
 const Owner = lazy(() =>
   import("./portals").then((m) => ({ default: m.OwnerPortal })),

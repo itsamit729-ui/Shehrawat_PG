@@ -29,10 +29,45 @@ import {
   Building,
   Download,
   RefreshCw,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { DEMO } from "./api";
 import { useApp } from "./state";
 import { downloadCSV, type Role } from "./domain";
+
+/** A lightweight, accessible appearance control shared across public and portal screens. */
+export function ThemeToggle() {
+  const [dark, setDark] = useState(() => {
+    try {
+      return window.localStorage.getItem("sehrawat-theme") === "dark";
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    document.documentElement.dataset.theme = dark ? "dark" : "light";
+    try {
+      window.localStorage.setItem("sehrawat-theme", dark ? "dark" : "light");
+    } catch {
+      // Storage can be unavailable in privacy-restricted browsers.
+    }
+  }, [dark]);
+  return (
+    <button
+      type="button"
+      className="theme-toggle"
+      aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+      title={dark ? "Light theme" : "Dark theme"}
+      aria-pressed={dark}
+      onClick={() => setDark((value) => !value)}
+    >
+      {dark ? <Sun size={17} /> : <Moon size={17} />}
+      <span>{dark ? "Light" : "Dark"}</span>
+    </button>
+  );
+}
+
 export function Brand() {
   return (
     <Link to="/" className="brand" aria-label="Sehrawat PG home">
@@ -62,6 +97,14 @@ export function PublicLayout({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   useEffect(() => setOpen(false), [location.pathname]);
+  useEffect(() => {
+    if (!open) return;
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onEscape);
+    return () => window.removeEventListener("keydown", onEscape);
+  }, [open]);
   return (
     <>
       <a className="skip" href="#main">
@@ -73,13 +116,15 @@ export function PublicLayout({ children }: { children: ReactNode }) {
           <Brand />
           <button
             className="icon-button mobile-menu"
-            aria-label="Toggle navigation"
+            aria-label={open ? "Close navigation" : "Open navigation"}
+            aria-controls="public-main-nav"
             aria-expanded={open}
             onClick={() => setOpen(!open)}
           >
             {open ? <X /> : <Menu />}
           </button>
           <nav
+            id="public-main-nav"
             className={open ? "public-nav open" : "public-nav"}
             aria-label="Main navigation"
           >
@@ -87,12 +132,21 @@ export function PublicLayout({ children }: { children: ReactNode }) {
             <NavLink to="/corporate">For companies</NavLink>
             <NavLink to="/partner">Partner with us</NavLink>
             <NavLink to="/about">Our story</NavLink>
+            <ThemeToggle />
             <Link className="nav-login" to="/login">
               Sign in <ArrowUpRight size={16} />
             </Link>
           </nav>
         </div>
       </header>
+      {open && (
+        <button
+          type="button"
+          className="public-nav-backdrop"
+          aria-label="Close navigation menu"
+          onClick={() => setOpen(false)}
+        />
+      )}
       <main id="main">{children}</main>
       <footer className="footer">
         <div className="container footer-grid">
@@ -214,7 +268,7 @@ export function PortalLayout({ children }: { children: ReactNode }) {
         <header className="app-header">
           <button
             className="icon-button mobile-menu"
-            aria-label="Open portal navigation"
+            aria-label={open ? "Close portal navigation" : "Open portal navigation"}
             aria-expanded={open}
             onClick={() => setOpen(!open)}
           >
@@ -225,6 +279,7 @@ export function PortalLayout({ children }: { children: ReactNode }) {
             {links.find(([p]) => loc.pathname.endsWith(p))?.[1] || "Overview"}
           </div>
           <div className="header-actions">
+            <ThemeToggle />
             <Link to="/explore" className="text-link">
               View website <ArrowUpRight size={14} />
             </Link>
