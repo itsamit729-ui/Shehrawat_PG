@@ -245,6 +245,6 @@ describe("page titles", () => {
     window.history.replaceState({}, "", `/properties/${property.id}`);
     render(<App />);
     await screen.findByRole("heading", { name: property.name });
-    expect(document.title).toBe("properties · Sehrawat PG");
+    expect(document.title).toBe("properties · Shehrawat PG");
   });
 });
