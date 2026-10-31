@@ -490,7 +490,7 @@ html[data-theme="dark"] .bubble { color:var(--ink); }
   .app-header { padding:0 22px; }
   .hero-search { margin-right:0; }
 }
-@media (max-width:760px) {
+@media (max-width:900px) {
   .site-header { z-index:90; }
   .header-row { height:72px; }
   .mobile-menu { display:inline-flex; min-height:44px; min-width:44px; }
@@ -594,3 +594,5 @@ html[data-theme="dark"] .bubble { color:var(--ink); }
   .site-header,.app-header { background:var(--surface-strong); }
   .hero-caption,.public-nav.open { background:var(--surface-strong); }
 }
+
+html[data-theme="dark"] .field > span { color:var(--muted); }
