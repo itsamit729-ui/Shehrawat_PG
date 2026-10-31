@@ -70,12 +70,13 @@ export function ThemeToggle() {
 
 export function Brand() {
   return (
-    <Link to="/" className="brand" aria-label="Sehrawat PG home">
-      <span className="brand-icon">
-        <Home size={21} />
+    <Link to="/" className="brand" aria-label="Shehrawat PG home">
+      <span className="brand-icon" aria-hidden="true">
+        <img src="/brand-mark.svg" alt="" width={44} height={44} />
       </span>
-      <span>
-        sehrawat<span className="brand-small">PG & CO-LIVING</span>
+      <span className="brand-wordmark">
+        Shehrawat <span className="brand-pg">PG</span>
+        <span className="brand-small">CO-LIVING &amp; RESIDENCES</span>
       </span>
     </Link>
   );
@@ -177,7 +178,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
         <div className="container footer-bottom">
-          © {new Date().getFullYear()} Sehrawat PG{" "}
+          © {new Date().getFullYear()} Shehrawat PG{" "}
           <span>Made for everyday living.</span>
         </div>
       </footer>

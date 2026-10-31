@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 466 96" role="img" aria-label="Shehrawat PG">
+<rect width="466" height="96" rx="16" fill="#F7FBF9"/>
+<g transform="translate(17 16)"><rect x="1" y="1" width="62" height="62" rx="19" fill="#155746"/>
+<path d="M14.5 30.5 32 16l17.5 14.5" stroke="#F6FFF9" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path d="M21 30.5V46h22V30.5" stroke="#F6FFF9" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path d="M29.5 45V36h5v9" stroke="#E8B985" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>
+<text x="96" y="54" font-family="Inter, Manrope, DejaVu Sans, sans-serif" font-size="32" font-weight="700" letter-spacing="-1.35" fill="#123D32">Shehrawat</text>
+<text x="277" y="54" font-family="Inter, Manrope, DejaVu Sans, sans-serif" font-size="30" font-weight="700" letter-spacing="-.8" fill="#B47D49">PG</text>
+<text x="98" y="72" font-family="Inter, Manrope, DejaVu Sans, sans-serif" font-size="9.6" font-weight="650" letter-spacing="2.7" fill="#668077">CO-LIVING &amp; RESIDENCES</text></svg>

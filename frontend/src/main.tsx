@@ -68,7 +68,7 @@ function ScrollReset() {
             .split("/")
             .filter((part) => part && !RECORD_ID.test(part))
             .at(-1)
-            ?.replaceAll("-", " ") || "Home") + " · Sehrawat PG";
+            ?.replaceAll("-", " ") || "Home") + " · Shehrawat PG";
   }, [location.pathname]);
   return null;
 }
