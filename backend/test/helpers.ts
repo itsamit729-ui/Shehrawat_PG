@@ -1,16 +1,18 @@
 import { randomUUID } from "node:crypto";
 import { sql } from "kysely";
 import type { FastifyInstance } from "fastify";
-import { buildApp } from "../src/app.js";
+import { buildApp, createContext } from "../src/app.js";
 import { loadConfig } from "../src/config.js";
 import { createDb, dbNow, type Db } from "../src/db/client.js";
 import { migrate } from "../src/db/migrate.js";
 import { hashPassword } from "../src/modules/identity/crypto.js";
-import type { GoogleProfile, Providers } from "../src/providers/index.js";
+import type { Context } from "../src/modules/identity/service.js";
+import type { GoogleProfile, PaymentLink, Providers } from "../src/providers/index.js";
 
 /** These suites need a real MySQL 8 because locking behaviour is exactly what they prove. */
 export const DATABASE_URL = process.env.TEST_DATABASE_URL;
 export const ORIGIN = "http://localhost:5173";
+export const WEBHOOK_SECRET = "test-webhook-secret";
 
 export const testConfig = (env: Record<string, string> = {}) =>
   loadConfig({
@@ -24,10 +26,21 @@ export const testConfig = (env: Record<string, string> = {}) =>
     FRONTEND_URL: ORIGIN,
     TRUST_PROXY_HOPS: "0",
     REQUIRE_EMAIL_VERIFICATION: "false",
+    RAZORPAY_KEY_ID: "rzp_test",
+    RAZORPAY_KEY_SECRET: "test-key-secret",
+    RAZORPAY_WEBHOOK_SECRET: WEBHOOK_SECRET,
+    WHATSAPP_TOKEN: "test-token",
+    WHATSAPP_PHONE_NUMBER_ID: "1",
+    WHATSAPP_BUSINESS_ACCOUNT_ID: "2",
+    WHATSAPP_APP_SECRET: WEBHOOK_SECRET,
+    WHATSAPP_VERIFY_TOKEN: "test-verify",
     ...env,
   });
 
 const TABLES = [
+  "campaign_recipients", "campaigns", "messages", "conversations", "contacts", "agreements", "uploads",
+  "service_requests", "leads", "tickets", "webhook_inbox", "expenses", "ledger_entries", "refunds",
+  "payment_applications", "payments", "payment_orders", "invoice_lines", "invoices", "business_settings",
   "bed_allocations", "holds", "bookings", "resident_profiles", "corporate_memberships", "corporate_accounts",
   "beds", "rooms", "property_rates", "properties", "audit_events", "idempotency_keys", "jobs", "rate_limits",
   "password_tokens", "otp_challenges", "sessions", "google_identities", "users", "businesses",
@@ -38,7 +51,21 @@ export interface Sent {
   links: { to: string; purpose: string; url: string }[];
 }
 
+/** What the fake providers were asked to do, and how to make them misbehave. */
+export interface Fakes {
+  links: { referenceId: string; amountPaise: number; expiresInSeconds?: number }[];
+  linkPayments: Record<string, PaymentLink["payments"]>;
+  loseNextLinkResponse: boolean;
+  refunds: { paymentId: string; amountPaise: number; receipt: string }[];
+  refundResult: () => Promise<{ id: string; status: string }>;
+  whatsapp: { to: string; body?: string; template?: string }[];
+  approvedTemplates: Set<string>;
+  stored: Record<string, Buffer>;
+}
+
 export interface Harness {
+  ctx: Context;
+  fakes: Fakes;
   app: FastifyInstance;
   db: Db;
   sent: Sent;
@@ -82,7 +109,59 @@ export async function createHarness(beds = 3, env: Record<string, string> = {}):
 
   const sent: Sent = { otps: [], links: [] };
   const googleProfiles: Record<string, GoogleProfile> = {};
+  const fakes: Fakes = {
+    links: [],
+    linkPayments: {},
+    loseNextLinkResponse: false,
+    refunds: [],
+    refundResult: async () => ({ id: `rfnd_${fakes.refunds.length}`, status: "pending" }),
+    whatsapp: [],
+    approvedTemplates: new Set(),
+    stored: {},
+  };
+  const linkFor = (referenceId: string): PaymentLink => ({
+    id: `plink_${referenceId}`,
+    url: `https://rzp.test/${referenceId}`,
+    status: "created",
+    payments: fakes.linkPayments[referenceId] ?? [],
+  });
   const providers: Providers = {
+    payments: {
+      createPaymentLink: async (input) => {
+        fakes.links.push(input);
+        if (fakes.loseNextLinkResponse) {
+          fakes.loseNextLinkResponse = false;
+          throw new Error("Connection reset");
+        }
+        return linkFor(input.referenceId);
+      },
+      findPaymentLink: async (referenceId) =>
+        fakes.links.some((l) => l.referenceId === referenceId) ? linkFor(referenceId) : null,
+      fetchPaymentLink: async (id) => linkFor(id.replace("plink_", "")),
+      refund: async (input) => {
+        fakes.refunds.push(input);
+        return fakes.refundResult();
+      },
+    },
+    whatsapp: {
+      sendText: async (to, body) => {
+        fakes.whatsapp.push({ to, body });
+        return { id: `wamid.out${fakes.whatsapp.length}` };
+      },
+      sendTemplate: async (to, template) => {
+        fakes.whatsapp.push({ to, template });
+        return { id: `wamid.out${fakes.whatsapp.length}` };
+      },
+      templateApproved: async (name) => fakes.approvedTemplates.has(name),
+    },
+    storage: {
+      presignPut: async (key) => `https://storage.test/put/${key}`,
+      presignGet: async (key) => `https://storage.test/get/${key}`,
+      head: async (key) =>
+        fakes.stored[key] ? { size: fakes.stored[key].length, contentType: "application/octet-stream" } : null,
+      readStart: async (key, bytes) => fakes.stored[key]!.subarray(0, bytes),
+      remove: async (key) => void delete fakes.stored[key],
+    },
     sms: { sendOtp: async (phone, code) => void sent.otps.push({ phone, code }) },
     mail: {
       sendPasswordLink: async ({ to, purpose, url }) => void sent.links.push({ to, purpose, url }),
@@ -97,6 +176,8 @@ export async function createHarness(beds = 3, env: Record<string, string> = {}):
   };
   const app = await buildApp({ config, db, providers, logger: false });
   return {
+    ctx: createContext(config, db, providers, app.log),
+    fakes,
     app,
     db,
     sent,

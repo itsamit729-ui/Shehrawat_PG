@@ -341,6 +341,11 @@ export function Automation() {
   const [busy, setBusy] = useState("");
   const rules = [
     [
+      "billingEnabled",
+      "Monthly rent invoices",
+      "Raises each resident's rent once a month. Turn on after confirming billing rules.",
+    ],
+    [
       "rentReminder",
       "Rent due reminder",
       "Utility template sent before the rent due date.",

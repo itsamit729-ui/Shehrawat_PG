@@ -7,13 +7,13 @@ A TypeScript API on Fastify and Aiven MySQL, deployed separately from the React 
 | Blueprint stage | State |
 |---|---|
 | 1. Schema, identity, deployment | Built: owner OTP, password login, sessions, CSRF, invitations, recovery, audit log, job queue. Not deployed. |
-| 2. Inventory, holds, booking | Partly built: properties, beds, 15-minute holds, resident profiles. Holds can't yet become confirmed bookings, because that needs payments. |
-| 3. Invoices, payments, reconciliation | Not started |
-| 4. Portals and complaints | Not started, apart from a scoped `/portal` with beds and residents |
-| 5. WhatsApp, bot, campaigns | Not started |
-| 6. Signing, dashboards, performance, recovery testing | Not started |
+| 2. Inventory, holds, booking | Built: properties, beds, 15-minute holds, confirmed bookings on verified payment, bed assignment and release. |
+| 3. Invoices, payments, reconciliation | Built: invoices, balanced ledger, Razorpay Payment Links, signed webhooks, reconciliation, manual receipts, refunds, expenses, monthly billing (off by default). Never run against a real Razorpay account. |
+| 4. Portals and complaints | Built: scoped `/portal` for each role, complaints, leads, referrals, move-outs, housing requests, settings, company links. Staff accounts are not built. |
+| 5. WhatsApp, bot, campaigns | Built: inbox, rule-based bot, consent and opt-out, 24-hour window, campaigns, automation rules. Never run against a real Meta account. |
+| 6. Signing, dashboards, performance, recovery testing | Partly built: private uploads with content checks. E-signing answers 503 until a vendor is chosen. No virus scanning. Load tests and a restore drill are not done. |
 
-Routes in the contract that aren't built return 404.
+An integration with no settings is off, and its routes answer 503 rather than pretend.
 
 **Verified on MySQL 8.4 in CI, not yet on Aiven.** All tests and migrations pass against a stock MySQL server in GitHub Actions. Aiven's TLS and default settings, and the app running on Render, are still untested.
 
@@ -91,6 +91,36 @@ Built in-house, using no third-party auth service.
 | Authorization | Checked per route on the server. Business and record scope come from the session, never the request. |
 
 Fresh-OTP checks for sensitive owner actions arrive with the first such action (refunds, stage 3). Owner phone recovery is the blueprint's manual process, and its steps still need agreeing.
+
+## Database schema
+
+`schema.sql` is the whole schema in one readable file. `migrations/` is the source of truth and runs automatically at start. After adding a migration, regenerate `schema.sql` so they agree.
+
+## Loading the owner's data
+
+```
+npm run import:owner-data -- --dir <folder>                    # checks everything, changes nothing
+npm run import:owner-data -- --dir <folder> --apply            # saves it
+npm run import:owner-data -- --dir <folder> --apply --remove-samples
+```
+
+It reads the CSV templates kept outside this repository, because filled files hold personal data and this repository is public. Any problem cancels the whole import. Repeating it is safe. `--remove-samples` deletes homes that aren't in the file and have no bookings, residents or leads. No email is sent: residents get in with Forgot password.
+
+## Webhooks and rules
+
+Register these with each provider, using this service's public address:
+
+| Provider | URL | Events |
+|---|---|---|
+| Razorpay | `/webhooks/razorpay` | `payment_link.paid`, `payment_link.expired`, `payment_link.cancelled`, `refund.processed`, `refund.failed` |
+| Meta WhatsApp | `/webhooks/whatsapp` | `messages`, using `WHATSAPP_VERIFY_TOKEN` to verify |
+
+Rules that need the owner's confirmation before relying on them:
+
+- A booking payment is one month's rent, recorded as that month's rent invoice.
+- Monthly billing only bills people who joined on or before the first of the month. Mid-month joiners get a manual invoice, because proration isn't decided. It stays off until the owner turns on Monthly rent invoices in the automation settings.
+- Marketing and automated WhatsApp messages need a recorded opt-in: a reply of START, or a source in the import file.
+- Automated messages use the template names `rent_reminder`, `payment_receipt`, `move_in_welcome`, `complaint_update` and `agreement_reminder`, which must be approved by Meta with matching variables.
 
 ## Decisions to confirm
 

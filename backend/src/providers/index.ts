@@ -1,4 +1,7 @@
 import type { Config } from "../config.js";
+import { createRazorpay } from "./razorpay.js";
+import { createStorage } from "./storage.js";
+import { createWhatsApp } from "./whatsapp.js";
 
 /** Providers are adapters, so a vendor can change without touching identity code. */
 export interface SmsProvider {
@@ -21,10 +24,62 @@ export interface GoogleProvider {
   exchangeCode(code: string): Promise<GoogleProfile>;
 }
 
+/** A definite refusal, as opposed to a timeout or 5xx whose effect is unknown. */
+export class ProviderRejected extends Error {
+  constructor(readonly status: number) {
+    super(`Provider rejected the request (${status})`);
+  }
+}
+
+export interface PaymentLink {
+  id: string;
+  url: string;
+  status: string;
+  payments: { id: string; amountPaise: number; currency: string; captured: boolean }[];
+}
+
+export interface PaymentProvider {
+  createPaymentLink(input: {
+    referenceId: string;
+    amountPaise: number;
+    description: string;
+    callbackUrl: string;
+    expiresInSeconds?: number;
+    customer?: { name: string; phone: string; email: string };
+  }): Promise<PaymentLink>;
+  findPaymentLink(referenceId: string): Promise<PaymentLink | null>;
+  fetchPaymentLink(id: string): Promise<PaymentLink>;
+  refund(input: { paymentId: string; amountPaise: number; receipt: string }): Promise<{ id: string; status: string }>;
+}
+
+export interface WhatsAppProvider {
+  sendText(to: string, body: string): Promise<{ id: string }>;
+  sendTemplate(to: string, template: string, params: string[]): Promise<{ id: string }>;
+  templateApproved(name: string): Promise<boolean>;
+}
+
+export interface StorageProvider {
+  presignPut(key: string, contentType: string, seconds: number): Promise<string>;
+  presignGet(key: string, seconds: number, fileName: string): Promise<string>;
+  head(key: string): Promise<{ size: number; contentType: string } | null>;
+  readStart(key: string, bytes: number): Promise<Buffer>;
+  remove(key: string): Promise<void>;
+}
+
+/** No e-sign vendor is chosen yet, so nothing implements this in production. */
+export interface SigningProvider {
+  signingLink(input: { agreementId: string; title: string; name: string; email: string }): Promise<{ requestId: string; url: string }>;
+}
+
+/** The optional ones stay absent until configured, and their routes answer 503 rather than pretend. */
 export interface Providers {
   sms: SmsProvider;
   mail: MailProvider;
   google: GoogleProvider;
+  payments?: PaymentProvider | null;
+  whatsapp?: WhatsAppProvider | null;
+  storage?: StorageProvider | null;
+  signing?: SigningProvider | null;
 }
 
 const MAIL_SUBJECT: Record<MailPurpose, string> = {
@@ -118,5 +173,9 @@ export function createProviders(config: Config): Providers {
     },
     mail: createMail(config),
     google: createGoogle(config),
+    payments: config.razorpay ? createRazorpay(config.razorpay.keyId, config.razorpay.keySecret) : null,
+    whatsapp: config.whatsapp ? createWhatsApp(config.whatsapp) : null,
+    storage: config.storage ? createStorage(config.storage) : null,
+    signing: null,
   };
 }

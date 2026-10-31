@@ -1,17 +1,28 @@
-import { buildApp } from "./app.js";
+import { buildApp, createContext } from "./app.js";
 import { loadConfig } from "./config.js";
 import { createDb } from "./db/client.js";
+import { businessHandlers, scheduleBusinessJobs } from "./jobs/business.js";
 import { housekeepingHandlers, scheduleHousekeeping } from "./jobs/housekeeping.js";
 import { startJobRunner } from "./jobs/runner.js";
+import { createProviders } from "./providers/index.js";
 
 const config = loadConfig();
 const db = createDb(config.db);
-const app = await buildApp({ config, db });
+const providers = createProviders(config);
+const app = await buildApp({ config, db, providers });
 if (config.production && config.logsAuthSecrets)
   app.log.warn("Some SMS or email is not being sent: login codes and password links are printed to these logs.");
 
 const stopJobs = config.jobRunnerEnabled
-  ? startJobRunner(db, housekeepingHandlers(db), app.log, () => scheduleHousekeeping(db))
+  ? startJobRunner(
+      db,
+      { ...housekeepingHandlers(db), ...businessHandlers(createContext(config, db, providers, app.log)) },
+      app.log,
+      async () => {
+        await scheduleHousekeeping(db);
+        await scheduleBusinessJobs(db);
+      },
+    )
   : async () => {};
 
 let closing = false;

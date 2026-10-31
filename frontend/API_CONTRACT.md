@@ -1,6 +1,6 @@
 # Backend integration contract
 
-All routes below are relative to `VITE_API_BASE_URL`, usually `/api/v1`. This document specifies the interface required by the frontend; it does not describe an already deployed backend.
+All routes below are relative to `VITE_API_BASE_URL`, usually `/api/v1`. This document specifies the interface required by the frontend. The backend implements it, except that e-signing answers 503 until a vendor is chosen and staff accounts don't exist yet. An integration with no settings answers 503.
 
 ## Common behaviour
 
@@ -48,7 +48,7 @@ The frontend sends POST `/{collection}` to create, PATCH `/{collection}/{id}` to
 
 | Collection | Allowed frontend purpose |
 |---|---|
-| `residents` | owner profile creation/editing; separate from bed allocation |
+| `residents` | owner profile creation/editing; optional `bedId` assigns a bed, optional `corporateId` links a company |
 | `properties` | owner public text editing |
 | `beds` | owner Available ↔ Blocked only when no conflicting occupancy/hold |
 | `invoices` | owner invoice draft/posting with duplicate billing protection |
@@ -78,6 +78,7 @@ See exact field types in `domain.ts`. Do not allow generic mutation endpoints to
 | POST `/housing-requests` | `{corporateId,propertyId,beds,start,notes,employee?,email?}`; company-scoped request, not immediate reservation |
 | POST `/uploads` | `{fileName,contentType,size,purpose}` → `{id,uploadUrl}`; issue short-lived authorized PUT URL |
 | POST `/uploads/{id}/complete` | inspect/quarantine file, verify type/size/object ownership before allowing download |
+| POST `/uploads/{id}/link` | expiring `{url}` for the uploader or owner; 404 for anyone else |
 
 `PUT uploadUrl` sends the selected file directly to private storage with Content-Type. The storage service must permit the final frontend Origin, PUT and Content-Type via CORS. The frontend accepts PDF/JPEG/PNG up to 5 MB; the server must independently enforce limits and scan/inspect content.
 

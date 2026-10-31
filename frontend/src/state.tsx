@@ -29,6 +29,7 @@ const empty: DataState = {
   expenses: [],
   allocations: [],
   requests: [],
+  corporates: [],
   payments: [],
   settings: {},
 };

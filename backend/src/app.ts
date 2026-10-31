@@ -1,7 +1,7 @@
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
-import Fastify, { type FastifyError } from "fastify";
+import Fastify, { type FastifyBaseLogger, type FastifyError } from "fastify";
 import { sql } from "kysely";
 import { randomUUID } from "node:crypto";
 import { ZodError } from "zod";
@@ -13,8 +13,21 @@ import { googleRoutes } from "./modules/identity/google.js";
 import { identityRoutes } from "./modules/identity/routes.js";
 import type { Context } from "./modules/identity/service.js";
 import { inventoryRoutes } from "./modules/inventory/routes.js";
+import { documentRoutes } from "./modules/documents/routes.js";
+import { financeRoutes, webhookRoutes } from "./modules/finance/routes.js";
+import { messagingRoutes } from "./modules/messaging/routes.js";
+import { operationsRoutes } from "./modules/operations/routes.js";
 import { peopleRoutes } from "./modules/people/routes.js";
 import { createProviders, type Providers } from "./providers/index.js";
+
+export const createContext = (config: Config, db: Db, providers: Providers, log: FastifyBaseLogger): Context => ({
+  db,
+  secret: config.authSecret,
+  frontendUrl: config.frontendUrl,
+  requireEmailVerification: config.requireEmailVerification,
+  providers,
+  log,
+});
 
 export async function buildApp(deps: { config: Config; db: Db; providers?: Providers; logger?: boolean }) {
   const { config, db } = deps;
@@ -34,14 +47,7 @@ export async function buildApp(deps: { config: Config; db: Db; providers?: Provi
   if (!business)
     throw new Error(`No business with slug "${config.businessSlug}". Run the create-owner or seed command first.`);
 
-  const ctx: Context = {
-    db,
-    secret: config.authSecret,
-    frontendUrl: config.frontendUrl,
-    requireEmailVerification: config.requireEmailVerification,
-    providers: deps.providers ?? createProviders(config),
-    log: app.log,
-  };
+  const ctx = createContext(config, db, deps.providers ?? createProviders(config), app.log);
 
   await app.register(helmet);
   await app.register(cors, {
@@ -83,8 +89,13 @@ export async function buildApp(deps: { config: Config; db: Db; providers?: Provi
       googleRoutes(api, { config, ctx, businessId: business.id });
       inventoryRoutes(api, { ctx, businessId: business.id });
       peopleRoutes(api, { ctx });
+      financeRoutes(api, { ctx, businessId: business.id });
+      operationsRoutes(api, { ctx, businessId: business.id });
+      messagingRoutes(api, { ctx });
+      documentRoutes(api, { ctx });
     },
     { prefix: "/api/v1" },
   );
+  await app.register(webhookRoutes(config, ctx), { prefix: "/webhooks" });
   return app;
 }

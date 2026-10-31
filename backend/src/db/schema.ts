@@ -199,4 +199,214 @@ export interface Database {
     created_at: Timestamp;
     updated_at: Timestamp;
   };
+  business_settings: {
+    business_id: string;
+    settings: Json<Record<string, unknown>>;
+    updated_at: Timestamp;
+  };
+  invoices: {
+    id: string;
+    business_id: string;
+    resident_id: string | null;
+    corporate_id: string | null;
+    period: string;
+    charge_type: string;
+    billing_key: string;
+    description: string;
+    due_on: string;
+    amount_paise: Paise;
+    paid_paise: ColumnType<number, number | undefined, number>;
+    status: Generated<"Due" | "Part paid" | "Paid" | "Void">;
+    created_at: Timestamp;
+    updated_at: Timestamp;
+  };
+  invoice_lines: {
+    id: string;
+    invoice_id: string;
+    kind: string;
+    description: string;
+    amount_paise: Paise;
+  };
+  payment_orders: {
+    id: string;
+    business_id: string;
+    hold_id: string | null;
+    invoice_id: string | null;
+    amount_paise: Paise;
+    currency: Generated<string>;
+    status: Generated<"pending" | "processing" | "confirmed" | "failed" | "review">;
+    provider_order_id: string | null;
+    checkout_url: string | null;
+    customer: Json<unknown> | null;
+    created_at: Timestamp;
+    updated_at: Timestamp;
+  };
+  payments: {
+    id: string;
+    business_id: string;
+    order_id: string | null;
+    source: "razorpay" | "manual";
+    method: string;
+    reference: string;
+    provider_payment_id: string | null;
+    amount_paise: Paise;
+    state: "captured" | "review";
+    recorded_by: string | null;
+    created_at: Timestamp;
+  };
+  payment_applications: {
+    payment_id: string;
+    invoice_id: string;
+    amount_paise: Paise;
+  };
+  refunds: {
+    id: string;
+    business_id: string;
+    payment_id: string;
+    amount_paise: Paise;
+    reason: string;
+    state: Generated<"Pending" | "Refunded" | "Failed" | "Review">;
+    provider_refund_id: string | null;
+    requested_by: string | null;
+    created_at: Timestamp;
+    updated_at: Timestamp;
+  };
+  ledger_entries: {
+    id: string;
+    business_id: string;
+    batch_id: string;
+    account: string;
+    debit_paise: Paise;
+    credit_paise: Paise;
+    source_type: string;
+    source_id: string;
+    created_at: Timestamp;
+  };
+  expenses: {
+    id: string;
+    business_id: string;
+    category: string;
+    description: string;
+    amount_paise: Paise;
+    spent_on: string;
+    recorded_by: string | null;
+    created_at: Timestamp;
+  };
+  webhook_inbox: {
+    id: string;
+    provider: string;
+    event_id: string;
+    payload: Json<unknown>;
+    received_at: Timestamp;
+    processed_at: NullableTimestamp;
+  };
+  tickets: {
+    id: string;
+    business_id: string;
+    resident_id: string;
+    subject: string;
+    category: string;
+    priority: string;
+    description: string;
+    status: Generated<"Open" | "In progress" | "Resolved">;
+    assignee: Generated<string>;
+    created_at: Timestamp;
+    updated_at: Timestamp;
+  };
+  leads: {
+    id: string;
+    business_id: string;
+    property_id: string | null;
+    kind: string;
+    name: string;
+    phone: string;
+    email: string;
+    visit_on: string | null;
+    status: Generated<"New" | "Contacted" | "Visit scheduled" | "Converted" | "Closed">;
+    notes: string;
+    created_at: Timestamp;
+    updated_at: Timestamp;
+  };
+  service_requests: {
+    id: string;
+    business_id: string;
+    type: "referrals" | "move-outs" | "housing-requests";
+    resident_id: string | null;
+    corporate_id: string | null;
+    details: Json<Record<string, unknown>>;
+    status: Generated<string>;
+    created_at: Timestamp;
+    updated_at: Timestamp;
+  };
+  uploads: {
+    id: string;
+    business_id: string;
+    owner_user_id: string;
+    purpose: string;
+    file_name: string;
+    content_type: string;
+    size_bytes: number;
+    object_key: string;
+    state: Generated<"pending" | "validated" | "rejected">;
+    created_at: Timestamp;
+  };
+  agreements: {
+    id: string;
+    business_id: string;
+    resident_id: string;
+    title: string;
+    status: Generated<"Draft" | "Sent" | "Signed" | "Cancelled">;
+    provider_request_id: string | null;
+    document_hash: string | null;
+    signed_upload_id: string | null;
+    created_at: Timestamp;
+    updated_at: Timestamp;
+  };
+  contacts: {
+    id: string;
+    business_id: string;
+    phone: string;
+    name: string;
+    resident_id: string | null;
+    opt_in_source: string | null;
+    opted_in_at: NullableTimestamp;
+    opted_out_at: NullableTimestamp;
+    created_at: Timestamp;
+  };
+  conversations: {
+    id: string;
+    business_id: string;
+    contact_id: string;
+    mode: Generated<"Bot" | "Human">;
+    assignee: Generated<string>;
+    last_inbound_at: NullableTimestamp;
+    created_at: Timestamp;
+  };
+  messages: {
+    id: string;
+    conversation_id: string;
+    sender: "customer" | "staff" | "bot";
+    body: string;
+    provider_message_id: string | null;
+    status: "queued" | "sent" | "delivered" | "read" | "received" | "failed" | "review";
+    created_at: Timestamp;
+  };
+  campaigns: {
+    id: string;
+    business_id: string;
+    name: string;
+    template: string;
+    audience: "Opted-in leads" | "Opted-in residents";
+    scheduled_at: RequiredTimestamp;
+    status: Generated<"Draft" | "Scheduled" | "Sending" | "Sent" | "Paused" | "Failed">;
+    created_at: Timestamp;
+    updated_at: Timestamp;
+  };
+  campaign_recipients: {
+    campaign_id: string;
+    contact_id: string;
+    state: Generated<"queued" | "sent" | "delivered" | "read" | "failed" | "skipped" | "review">;
+    provider_message_id: string | null;
+    sent_at: NullableTimestamp;
+  };
 }

@@ -31,6 +31,20 @@ const schema = z.object({
   API_URL: z.string().default(""),
   // "password" is a stopgap until SMS is available. Each mode turns the other one off.
   OWNER_LOGIN: z.enum(["otp", "password"]).default("otp"),
+  // Each integration stays off until every one of its settings is present.
+  RAZORPAY_KEY_ID: z.string().default(""),
+  RAZORPAY_KEY_SECRET: z.string().default(""),
+  RAZORPAY_WEBHOOK_SECRET: z.string().default(""),
+  WHATSAPP_TOKEN: z.string().default(""),
+  WHATSAPP_PHONE_NUMBER_ID: z.string().default(""),
+  WHATSAPP_BUSINESS_ACCOUNT_ID: z.string().default(""),
+  WHATSAPP_APP_SECRET: z.string().default(""),
+  WHATSAPP_VERIFY_TOKEN: z.string().default(""),
+  STORAGE_ENDPOINT: z.string().default(""),
+  STORAGE_BUCKET: z.string().default(""),
+  STORAGE_REGION: z.string().default("auto"),
+  STORAGE_ACCESS_KEY: z.string().default(""),
+  STORAGE_SECRET_KEY: z.string().default(""),
   JOB_RUNNER_ENABLED: z
     .enum(["true", "false"])
     .default("true")
@@ -92,6 +106,34 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env) {
           redirectUri: `${apiUrl}/api/v1/auth/google/callback`,
         }
       : null,
+    razorpay:
+      c.RAZORPAY_KEY_ID && c.RAZORPAY_KEY_SECRET && c.RAZORPAY_WEBHOOK_SECRET
+        ? { keyId: c.RAZORPAY_KEY_ID, keySecret: c.RAZORPAY_KEY_SECRET, webhookSecret: c.RAZORPAY_WEBHOOK_SECRET }
+        : null,
+    whatsapp:
+      c.WHATSAPP_TOKEN &&
+      c.WHATSAPP_PHONE_NUMBER_ID &&
+      c.WHATSAPP_BUSINESS_ACCOUNT_ID &&
+      c.WHATSAPP_APP_SECRET &&
+      c.WHATSAPP_VERIFY_TOKEN
+        ? {
+            token: c.WHATSAPP_TOKEN,
+            phoneNumberId: c.WHATSAPP_PHONE_NUMBER_ID,
+            businessAccountId: c.WHATSAPP_BUSINESS_ACCOUNT_ID,
+            appSecret: c.WHATSAPP_APP_SECRET,
+            verifyToken: c.WHATSAPP_VERIFY_TOKEN,
+          }
+        : null,
+    storage:
+      c.STORAGE_ENDPOINT && c.STORAGE_BUCKET && c.STORAGE_ACCESS_KEY && c.STORAGE_SECRET_KEY
+        ? {
+            endpoint: c.STORAGE_ENDPOINT,
+            bucket: c.STORAGE_BUCKET,
+            region: c.STORAGE_REGION,
+            accessKey: c.STORAGE_ACCESS_KEY,
+            secretKey: c.STORAGE_SECRET_KEY,
+          }
+        : null,
     logsAuthSecrets: c.SMS_PROVIDER === "log" || c.MAIL_PROVIDER === "log",
     trustProxyHops: c.TRUST_PROXY_HOPS,
     businessSlug: c.BUSINESS_SLUG,

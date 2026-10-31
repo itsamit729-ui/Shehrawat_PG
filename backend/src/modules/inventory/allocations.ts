@@ -298,6 +298,167 @@ export async function setBedBlocked(db: Db, businessId: string, bedId: string, b
   );
 }
 
+export interface HeldAllocation {
+  id: string;
+  bookingId: string;
+  holdId: string;
+  bedId: string;
+  state: string;
+  live: boolean;
+  stayStart: string;
+  propertyId: string;
+  roomLabel: string;
+  rentPaise: number;
+}
+
+/** Locks the hold's bed first, the common lock order, then reads the allocation under that lock. */
+export async function lockHeldAllocation(trx: Trx, holdId: string): Promise<HeldAllocation | null> {
+  const found = await trx.selectFrom("bed_allocations").select("bed_id").where("hold_id", "=", holdId).executeTakeFirst();
+  if (!found) return null;
+  await lockBeds(trx, [found.bed_id]);
+  const a = await trx
+    .selectFrom("bed_allocations as a")
+    .innerJoin("beds as b", "b.id", "a.bed_id")
+    .innerJoin("rooms as r", "r.id", "b.room_id")
+    .innerJoin("property_rates as pr", (join) =>
+      join.onRef("pr.property_id", "=", "r.property_id").onRef("pr.sharing", "=", "r.sharing"),
+    )
+    .select([
+      "a.id",
+      "a.booking_id",
+      "a.bed_id",
+      "a.state",
+      "a.stay_start",
+      "r.property_id",
+      "r.code as room_code",
+      "b.code as bed_code",
+      "pr.monthly_rent_paise",
+      sql<number>`a.hold_expires_at > UTC_TIMESTAMP(6)`.as("live"),
+    ])
+    .where("a.hold_id", "=", holdId)
+    .executeTakeFirstOrThrow();
+  return {
+    id: a.id,
+    bookingId: a.booking_id,
+    holdId,
+    bedId: a.bed_id,
+    state: a.state,
+    live: Boolean(a.live),
+    stayStart: a.stay_start,
+    propertyId: a.property_id,
+    roomLabel: a.room_code + a.bed_code,
+    rentPaise: Number(a.monthly_rent_paise),
+  };
+}
+
+export async function confirmHeldAllocation(trx: Trx, allocation: HeldAllocation, residentId: string) {
+  await trx
+    .updateTable("bed_allocations")
+    .set({ state: "confirmed", hold_expires_at: null, updated_at: dbNow })
+    .where("id", "=", allocation.id)
+    .execute();
+  await trx.updateTable("holds").set({ state: "converted" }).where("id", "=", allocation.holdId).execute();
+  await trx
+    .updateTable("bookings")
+    .set({ state: "confirmed", resident_id: residentId, updated_at: dbNow })
+    .where("id", "=", allocation.bookingId)
+    .execute();
+}
+
+/** Money that can't become a booking goes to review. The bed is freed and never revived. */
+export async function releaseHeldAllocation(trx: Trx, allocation: HeldAllocation) {
+  if (allocation.state === "held") {
+    await trx
+      .updateTable("bed_allocations")
+      .set({ state: "released", updated_at: dbNow })
+      .where("id", "=", allocation.id)
+      .execute();
+    await trx
+      .updateTable("holds")
+      .set({ state: allocation.live ? "cancelled" : "expired" })
+      .where("id", "=", allocation.holdId)
+      .where("state", "=", "active")
+      .execute();
+  }
+  await trx
+    .updateTable("bookings")
+    .set({ state: "payment_review", updated_at: dbNow })
+    .where("id", "=", allocation.bookingId)
+    .where("state", "in", ["held", "expired"])
+    .execute();
+}
+
+/** Places a resident on a bed from `start`, or fails with 409 if the bed isn't free then. */
+export async function assignBed(
+  trx: Trx,
+  input: { businessId: string; residentId: string; bedId: string; start: string },
+) {
+  const [bed] = await lockBeds(trx, [input.bedId]);
+  const own = await trx
+    .selectFrom("beds as b")
+    .innerJoin("rooms as r", "r.id", "b.room_id")
+    .select(["b.code", "r.code as room_code", "r.property_id"])
+    .where("b.id", "=", input.bedId)
+    .where("b.business_id", "=", input.businessId)
+    .executeTakeFirst();
+  if (!bed || !own) throw notFound("This bed");
+  await releaseElapsedHolds(trx, [input.bedId]);
+  const taken = await trx
+    .selectFrom("bed_allocations as a")
+    .select("a.id")
+    .where("a.bed_id", "=", input.bedId)
+    .where((eb) => blocksStay(eb, input.start))
+    .executeTakeFirst();
+  if (taken || bed.blocked || !bed.active) throw conflict("This bed isn't free for that date.");
+  const bookingId = randomUUID();
+  await trx
+    .insertInto("bookings")
+    .values({ id: bookingId, business_id: input.businessId, resident_id: input.residentId, state: "occupied" })
+    .execute();
+  await trx
+    .insertInto("bed_allocations")
+    .values({
+      id: randomUUID(),
+      business_id: input.businessId,
+      bed_id: input.bedId,
+      booking_id: bookingId,
+      hold_id: null,
+      state: "occupied",
+      hold_expires_at: null,
+      stay_start: input.start,
+      stay_end: null,
+    })
+    .execute();
+  return { propertyId: own.property_id, roomLabel: own.room_code + own.code };
+}
+
+/** Ends a resident's stays, which frees their bed from `end` onward. */
+export async function endResidentStays(trx: Trx, residentId: string, end: string) {
+  const stays = await trx
+    .selectFrom("bed_allocations as a")
+    .innerJoin("bookings as k", "k.id", "a.booking_id")
+    .select(["a.id", "a.bed_id", "a.booking_id", "a.stay_start"])
+    .where("k.resident_id", "=", residentId)
+    .where("a.state", "in", ["confirmed", "occupied"])
+    .execute();
+  if (!stays.length) return;
+  await lockBeds(trx, stays.map((s) => s.bed_id));
+  for (const stay of stays) {
+    // A stay that never started has no range to keep, and stay_end must be after stay_start.
+    const started = stay.stay_start < end;
+    await trx
+      .updateTable("bed_allocations")
+      .set({ state: started ? "checked_out" : "released", ...(started ? { stay_end: end } : {}), updated_at: dbNow })
+      .where("id", "=", stay.id)
+      .execute();
+    await trx
+      .updateTable("bookings")
+      .set({ state: started ? "checked_out" : "cancelled", updated_at: dbNow })
+      .where("id", "=", stay.booking_id)
+      .execute();
+  }
+}
+
 /**
  * Housekeeping only: correctness never depends on this running, because every read and allocation
  * already ignores elapsed holds. Beds lock first, matching createHold's order.

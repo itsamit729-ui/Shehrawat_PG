@@ -241,6 +241,30 @@ export function Residents() {
     },
     { name: "room", label: "Room / bed label", required: true },
     {
+      name: "bedId",
+      label: "Assign a bed (optional)",
+      options: [
+        { value: "", label: "No change" },
+        ...data.beds
+          .filter((b) => b.status === "Available")
+          .map((b) => ({
+            value: b.id,
+            label:
+              (data.properties.find((p) => p.id === b.propertyId)?.name ?? "") +
+              " " +
+              b.room,
+          })),
+      ],
+    },
+    {
+      name: "corporateId",
+      label: "Company (optional)",
+      options: [
+        { value: "", label: "None" },
+        ...data.corporates.map((c) => ({ value: c.id, label: c.name })),
+      ],
+    },
+    {
       name: "rent",
       label: "Monthly rent (₹)",
       type: "number",
@@ -326,7 +350,7 @@ export function Residents() {
       {edit && (
         <FormModal
           title={edit === true ? "Add a resident" : "Resident details"}
-          description="Creating a resident profile does not reserve or allocate a bed."
+          description="A bed is reserved only if you choose one here."
           fields={fields}
           defaults={edit === true ? {} : { ...edit }}
           onClose={() => setEdit(null)}

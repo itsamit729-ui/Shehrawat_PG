@@ -152,6 +152,7 @@ export interface DataState {
   allocations: Allocation[];
   requests: RecordItem[];
   payments: RecordItem[];
+  corporates: { id: string; name: string }[];
   settings: Record<string, unknown>;
 }
 export type Collection = Exclude<keyof DataState, "settings">;

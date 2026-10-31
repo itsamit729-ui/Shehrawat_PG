@@ -1,8 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { dbNow, isDuplicate, type Db } from "../../db/client.js";
+import { dbNow, isDuplicate, lockingTransaction, withDeadlockRetry, type Db, type Trx } from "../../db/client.js";
 import type { ResidentStatus } from "../../db/schema.js";
 import { conflict, invalid, notFound } from "../../http/errors.js";
 import { audit } from "../../shared/audit.js";
+import { businessToday } from "../../shared/dates.js";
 import { paiseToRupees, rupeesToPaise } from "../../shared/money.js";
 import {
   deliverPasswordLink,
@@ -11,8 +12,13 @@ import {
   normalizePhone,
   type Context,
 } from "../identity/service.js";
+import { assignBed, endResidentStays } from "../inventory/allocations.js";
 
 const DUPLICATE_CONTACT = "A person with this email or phone already exists.";
+
+/** These can place someone on a bed, so they read current data under locks, like every allocation. */
+const inBedTransaction = <T>(db: Db, work: (trx: Trx) => Promise<T>) =>
+  withDeadlockRetry(() => lockingTransaction(db, work));
 
 export interface ResidentInput {
   name: string;
@@ -23,6 +29,8 @@ export interface ResidentInput {
   rent: number;
   status: ResidentStatus;
   joined: string;
+  corporateId?: string;
+  bedId?: string;
 }
 
 function residentQuery(db: Db, businessId: string) {
@@ -72,6 +80,17 @@ export const listResidentById = async (db: Db, businessId: string, residentId: s
 export const listCorporateResidents = async (db: Db, businessId: string, corporateId: string) =>
   (await residentQuery(db, businessId).where("r.corporate_id", "=", corporateId).execute()).map(toApi);
 
+async function assertOwnCorporate(db: Db, businessId: string, corporateId: string | undefined) {
+  if (!corporateId) return;
+  const company = await db
+    .selectFrom("corporate_accounts")
+    .select("id")
+    .where("id", "=", corporateId)
+    .where("business_id", "=", businessId)
+    .executeTakeFirst();
+  if (!company) throw invalid("Choose one of your company accounts.");
+}
+
 async function assertOwnProperty(db: Db, businessId: string, propertyId: string) {
   const property = await db
     .selectFrom("properties")
@@ -95,11 +114,12 @@ export async function createResident(
   requestId: string,
 ) {
   await assertOwnProperty(ctx.db, actor.businessId, input.propertyId);
+  await assertOwnCorporate(ctx.db, actor.businessId, input.corporateId);
   const email = normalizeEmail(input.email);
   const residentId = randomUUID();
   let token: string | null;
   try {
-    token = await ctx.db.transaction().execute(async (trx) => {
+    token = await inBedTransaction(ctx.db, async (trx) => {
       const existing = await trx
         .selectFrom("users as u")
         .leftJoin("resident_profiles as r", "r.user_id", "u.id")
@@ -152,7 +172,7 @@ export async function createResident(
           id: residentId,
           business_id: actor.businessId,
           user_id: userId,
-          corporate_id: null,
+          corporate_id: input.corporateId || null,
           property_id: input.propertyId,
           room_label: input.room,
           monthly_rent_paise: rupeesToPaise(input.rent),
@@ -160,6 +180,7 @@ export async function createResident(
           joined_on: input.joined,
         })
         .execute();
+      if (input.bedId) await placeOnBed(trx, actor.businessId, residentId, input.bedId, input.joined);
       await audit(trx, {
         businessId: actor.businessId,
         actorUserId: actor.id,
@@ -178,6 +199,16 @@ export async function createResident(
   return { id: residentId };
 }
 
+/** The bed decides the home and room label, so the profile can't disagree with the allocation. */
+async function placeOnBed(trx: Trx, businessId: string, residentId: string, bedId: string, start: string) {
+  const { propertyId, roomLabel } = await assignBed(trx, { businessId, residentId, bedId, start });
+  await trx
+    .updateTable("resident_profiles")
+    .set({ property_id: propertyId, room_label: roomLabel, updated_at: dbNow })
+    .where("id", "=", residentId)
+    .execute();
+}
+
 export async function updateResident(
   ctx: Context,
   actor: { id: string; businessId: string },
@@ -186,13 +217,14 @@ export async function updateResident(
   requestId: string,
 ) {
   if (input.propertyId) await assertOwnProperty(ctx.db, actor.businessId, input.propertyId);
+  await assertOwnCorporate(ctx.db, actor.businessId, input.corporateId);
   const fields = Object.keys(input);
   if (!fields.length) throw invalid("Nothing to update.");
   try {
-    await ctx.db.transaction().execute(async (trx) => {
+    await inBedTransaction(ctx.db, async (trx) => {
       const resident = await trx
         .selectFrom("resident_profiles")
-        .select("user_id")
+        .select(["user_id", "status", "joined_on"])
         .where("id", "=", residentId)
         .where("business_id", "=", actor.businessId)
         .forUpdate()
@@ -217,10 +249,20 @@ export async function updateResident(
           ...(input.rent !== undefined ? { monthly_rent_paise: rupeesToPaise(input.rent) } : {}),
           ...(input.status ? { status: input.status } : {}),
           ...(input.joined ? { joined_on: input.joined } : {}),
+          ...(input.corporateId !== undefined ? { corporate_id: input.corporateId || null } : {}),
           updated_at: dbNow,
         })
         .where("id", "=", residentId)
         .execute();
+      // Moving out frees the bed. A move to a new bed ends the old stay first.
+      if (input.status === "Moved out" && resident.status !== "Moved out")
+        await endResidentStays(trx, residentId, businessToday());
+      if (input.bedId) {
+        await endResidentStays(trx, residentId, businessToday());
+        const today = businessToday();
+        const joined = input.joined ?? resident.joined_on;
+        await placeOnBed(trx, actor.businessId, residentId, input.bedId, joined > today ? joined : today);
+      }
       await audit(trx, {
         businessId: actor.businessId,
         actorUserId: actor.id,

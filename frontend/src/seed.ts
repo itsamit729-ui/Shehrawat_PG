@@ -204,6 +204,7 @@ export function seed(): DataState {
         status: "Active",
       })),
     requests: [],
+    corporates: [],
     payments: [],
     settings: {
       businessName: "Sehrawat PG",
