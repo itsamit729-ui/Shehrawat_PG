@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Check, Clock, Upload, ArrowRight } from "lucide-react";
 import { DEMO, request } from "./api";
+import { useApp } from "./state";
 import {
   PublicLayout,
   Panel,
@@ -168,6 +169,174 @@ export function SetPassword() {
         </Panel>
       </section>
     </PublicLayout>
+  );
+}
+export function VerifyEmail() {
+  const [params] = useSearchParams();
+  const token = params.get("token");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [done, setDone] = useState(false);
+  return (
+    <PublicLayout>
+      <section className="container section narrow">
+        <Panel>
+          {done ? (
+            <div className="success">
+              <Check size={32} />
+              <h3>Email verified.</h3>
+              <Link to="/login" className="btn">
+                Sign in
+              </Link>
+            </div>
+          ) : (
+            <>
+              <h2>Verify your email</h2>
+              {error && <Alert>{error}</Alert>}
+              {/* A button, because mail scanners open links and would use up the token. */}
+              <button
+                className="btn"
+                disabled={busy || !token}
+                onClick={async () => {
+                  setBusy(true);
+                  setError("");
+                  try {
+                    await request("/auth/verify-email", {
+                      method: "POST",
+                      body: { token },
+                    });
+                    setDone(true);
+                  } catch (e) {
+                    setError((e as Error).message);
+                  } finally {
+                    setBusy(false);
+                  }
+                }}
+              >
+                {busy ? "Verifying…" : "Verify my email"}
+              </button>
+              <Link className="text-link" to="/resend-verification">
+                Send a new link
+              </Link>
+            </>
+          )}
+        </Panel>
+      </section>
+    </PublicLayout>
+  );
+}
+export function AccountSecurity() {
+  const { session, notify } = useApp();
+  const [params] = useSearchParams();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [googleEnabled, setGoogleEnabled] = useState(false);
+  const isResident = session?.role === "resident";
+  useEffect(() => {
+    if (DEMO || !isResident) return;
+    request<{ enabled: boolean } | null>("/auth/google/enabled")
+      .then((r) => setGoogleEnabled(Boolean(r?.enabled)))
+      .catch(() => {
+        /* Only hides the connect button. */
+      });
+  }, [isResident]);
+  return (
+    <>
+      <PageHead
+        title="Keep your account safe."
+        description="Change your password or how you sign in."
+      />
+      <Panel title="Change password">
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const form = e.currentTarget;
+            setBusy(true);
+            setError("");
+            const v = Object.fromEntries(new FormData(form)) as Record<
+              string,
+              string
+            >;
+            try {
+              if (v.password.length < 12)
+                throw new Error("Use at least 12 characters.");
+              if (v.password !== v.confirm)
+                throw new Error("The passwords do not match.");
+              if (!DEMO)
+                await request("/auth/change-password", {
+                  method: "POST",
+                  body: {
+                    currentPassword: v.currentPassword,
+                    password: v.password,
+                  },
+                });
+              form.reset();
+              notify("Password changed. Other devices have been signed out.");
+            } catch (e) {
+              setError((e as Error).message);
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          <Fields
+            fields={[
+              {
+                name: "currentPassword",
+                label: "Current password",
+                type: "password",
+                required: true,
+              },
+              {
+                name: "password",
+                label: "New password (12+ characters)",
+                type: "password",
+                required: true,
+              },
+              {
+                name: "confirm",
+                label: "Confirm new password",
+                type: "password",
+                required: true,
+              },
+            ]}
+          />
+          {error && <Alert>{error}</Alert>}
+          <button className="btn" disabled={busy}>
+            {busy ? "Updating…" : "Change password"}
+          </button>
+          <p className="form-note">
+            Signed up with Google? <Link to="/recover">Set a password</Link>{" "}
+            with a recovery link first.
+          </p>
+        </form>
+      </Panel>
+      {googleEnabled && (
+        <Panel title="Google sign-in">
+          {params.get("google_connected") ? (
+            <p>Your Google account is connected.</p>
+          ) : (
+            <button
+              className="btn secondary"
+              onClick={async () => {
+                setError("");
+                try {
+                  const { url } = await request<{ url: string }>(
+                    "/auth/google/link",
+                    { method: "POST" },
+                  );
+                  window.location.assign(url);
+                } catch (e) {
+                  setError((e as Error).message);
+                }
+              }}
+            >
+              Connect Google
+            </button>
+          )}
+        </Panel>
+      )}
+    </>
   );
 }
 export function DocumentUpload() {

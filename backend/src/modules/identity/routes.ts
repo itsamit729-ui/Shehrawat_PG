@@ -1,15 +1,19 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import type { Config } from "../../config.js";
-import { clearSessionCookie, requireUser, setSessionCookie } from "../../http/pipeline.js";
+import { clearSessionCookie, requireRole, requireUser, setSessionCookie } from "../../http/pipeline.js";
 import { csrfTokenFor } from "./crypto.js";
 import {
+  changePassword,
   createSession,
   lookupSession,
   requestOwnerOtp,
   requestRecovery,
+  resendVerification,
   revokeSession,
   setPasswordWithToken,
+  signUp,
+  verifyEmail,
   verifyOwnerOtp,
   verifyOwnerPassword,
   verifyPasswordLogin,
@@ -31,7 +35,23 @@ const login = z.discriminatedUnion("role", [
   }),
 ]);
 const ownerPassword = z.object({ password: z.string().min(1, "Enter your password.").max(128) });
+const newAccount = {
+  name: z.string().trim().min(1, "Enter your name.").max(160),
+  email: z.email().max(254),
+  password: z.string().min(1).max(128),
+};
+const signup = z.discriminatedUnion("role", [
+  z.object({ role: z.literal("resident"), ...newAccount }),
+  z.object({
+    role: z.literal("corporate"),
+    ...newAccount,
+    companyName: z.string().trim().min(1, "Enter your company name.").max(160),
+  }),
+]);
 const recover = z.object({ email: z.email().max(254) });
+const verify = z.object({ token: z.string().min(16).max(128) });
+const change = z.object({ currentPassword: z.string().min(1).max(128), password: z.string().min(1).max(128) });
+const CHECK_EMAIL = "If this account is eligible, an email will arrive shortly. Check your spam folder too.";
 const setPassword = z.object({ token: z.string().min(16).max(128), password: z.string().min(1).max(128) });
 
 // businessId stays server-side: the frontend's Session model has no use for it.
@@ -73,6 +93,40 @@ export function identityRoutes(app: FastifyInstance, opts: { config: Config; ctx
     setSessionCookie(config, reply, token, maxAgeSeconds);
     const user = await lookupSession(ctx, token);
     return { user: publicUser(user!), csrfToken: csrfTokenFor(config.authSecret, token) };
+  });
+
+  app.post("/auth/signup", async (request, reply) => {
+    await signUp(ctx, businessId, signup.parse(request.body), request.ip);
+    const verificationRequired = config.requireEmailVerification;
+    return reply.status(202).send({
+      verificationRequired,
+      message: verificationRequired
+        ? CHECK_EMAIL
+        : "You can sign in now. If you already have an account, use its existing password.",
+    });
+  });
+
+  app.post("/auth/resend-verification", async (request) => {
+    const { email } = recover.parse(request.body);
+    await resendVerification(ctx, businessId, email, request.ip);
+    return { message: CHECK_EMAIL };
+  });
+
+  app.post("/auth/verify-email", async (request, reply) => {
+    const { token } = verify.parse(request.body);
+    await verifyEmail(ctx, token, request.ip);
+    return reply.status(204).send();
+  });
+
+  // The owner's password comes from create-owner, so it changes through --reset-password.
+  app.post("/auth/change-password", async (request, reply) => {
+    const user = requireRole(request, "resident", "corporate");
+    const { currentPassword, password } = change.parse(request.body);
+    await changePassword(ctx, user, currentPassword, password, request.ip);
+    const { token, maxAgeSeconds } = await createSession(ctx, user.id, request.sessionToken ?? undefined);
+    setSessionCookie(config, reply, token, maxAgeSeconds);
+    const fresh = await lookupSession(ctx, token);
+    return { user: publicUser(fresh!), csrfToken: csrfTokenFor(config.authSecret, token) };
   });
 
   app.post("/auth/logout", async (request, reply) => {

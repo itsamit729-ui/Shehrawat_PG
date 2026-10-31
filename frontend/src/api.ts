@@ -1,6 +1,7 @@
 export const DEMO = import.meta.env.VITE_DEMO_MODE === "true";
 const BASE = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 let csrf = "";
+export const apiUrl = (path: string) => BASE + path;
 export class ApiError extends Error {
   constructor(
     message: string,

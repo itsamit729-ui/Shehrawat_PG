@@ -31,6 +31,13 @@ All routes below are relative to `VITE_API_BASE_URL`, usually `/api/v1`. This do
 |---|---|
 | POST `/auth/otp/request` | `{phone}` → `{challengeId}`; owner only, server throttles/resend/expiry/attempt limits |
 | POST `/auth/login` | owner `{role,challengeId,otp}`, others `{role,email,password}` → `{user: Session,csrfToken}` plus cookie |
+| POST `/auth/signup` | resident `{role,name,email,password}`, corporate adds `{companyName}` → 202 `{verificationRequired,message}`; same answer if the email is taken, and no session |
+| POST `/auth/verify-email` | `{token}` → 204; single-use |
+| POST `/auth/resend-verification` | `{email}`; same safe response whether account exists or not |
+| POST `/auth/change-password` | resident or corporate `{currentPassword,password}` → `{user: Session,csrfToken}` plus new cookie; ends other sessions |
+| GET `/auth/google/enabled` | `{enabled}` |
+| GET `/auth/google/start` | redirects to Google, then back to `/resident/home` or `/login?google_error=existing\|failed` |
+| POST `/auth/google/link` | resident → `{url}` to open, then back to `/resident/security?google_connected=1` |
 | POST `/auth/logout` | revoke session, clear cookie |
 | POST `/auth/recover` | `{email}`; same safe response whether account exists or not |
 | POST `/auth/set-password` | `{token,password}`; single-use invitation/recovery token, expiry, server password policy |

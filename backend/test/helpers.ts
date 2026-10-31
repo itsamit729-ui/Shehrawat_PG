@@ -3,10 +3,10 @@ import { sql } from "kysely";
 import type { FastifyInstance } from "fastify";
 import { buildApp } from "../src/app.js";
 import { loadConfig } from "../src/config.js";
-import { createDb, type Db } from "../src/db/client.js";
+import { createDb, dbNow, type Db } from "../src/db/client.js";
 import { migrate } from "../src/db/migrate.js";
 import { hashPassword } from "../src/modules/identity/crypto.js";
-import type { Providers } from "../src/providers/index.js";
+import type { GoogleProfile, Providers } from "../src/providers/index.js";
 
 /** These suites need a real MySQL 8 because locking behaviour is exactly what they prove. */
 export const DATABASE_URL = process.env.TEST_DATABASE_URL;
@@ -23,13 +23,14 @@ export const testConfig = (env: Record<string, string> = {}) =>
     FRONTEND_ORIGINS: ORIGIN,
     FRONTEND_URL: ORIGIN,
     TRUST_PROXY_HOPS: "0",
+    REQUIRE_EMAIL_VERIFICATION: "false",
     ...env,
   });
 
 const TABLES = [
   "bed_allocations", "holds", "bookings", "resident_profiles", "corporate_memberships", "corporate_accounts",
   "beds", "rooms", "property_rates", "properties", "audit_events", "idempotency_keys", "jobs", "rate_limits",
-  "password_tokens", "otp_challenges", "sessions", "users", "businesses",
+  "password_tokens", "otp_challenges", "sessions", "google_identities", "users", "businesses",
 ];
 
 export interface Sent {
@@ -41,6 +42,7 @@ export interface Harness {
   app: FastifyInstance;
   db: Db;
   sent: Sent;
+  googleProfiles: Record<string, GoogleProfile>;
   businessId: string;
   ownerId: string;
   ownerPhone: string;
@@ -79,10 +81,18 @@ export async function createHarness(beds = 3, env: Record<string, string> = {}):
   const otherPropertyId = await addProperty(db, businessId, "Home Two", 1);
 
   const sent: Sent = { otps: [], links: [] };
+  const googleProfiles: Record<string, GoogleProfile> = {};
   const providers: Providers = {
     sms: { sendOtp: async (phone, code) => void sent.otps.push({ phone, code }) },
     mail: {
       sendPasswordLink: async ({ to, purpose, url }) => void sent.links.push({ to, purpose, url }),
+    },
+    google: {
+      exchangeCode: async (code) => {
+        const profile = googleProfiles[code];
+        if (!profile) throw new Error("Unknown code");
+        return profile;
+      },
     },
   };
   const app = await buildApp({ config, db, providers, logger: false });
@@ -90,6 +100,7 @@ export async function createHarness(beds = 3, env: Record<string, string> = {}):
     app,
     db,
     sent,
+    googleProfiles,
     businessId,
     ownerId,
     ownerPhone,
@@ -157,6 +168,7 @@ export async function addResident(h: Harness, email: string, password: string, p
       email,
       phone: null,
       password_hash: await hashPassword(password),
+      email_verified_at: dbNow as never,
     })
     .execute();
   await h.db

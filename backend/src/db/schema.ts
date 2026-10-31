@@ -29,9 +29,15 @@ export interface Database {
     email: string | null;
     phone: string | null;
     password_hash: string | null;
+    email_verified_at: NullableTimestamp;
     last_login_at: NullableTimestamp;
     created_at: Timestamp;
     updated_at: Timestamp;
+  };
+  google_identities: {
+    google_sub: string;
+    user_id: string;
+    created_at: Timestamp;
   };
   sessions: {
     token_hash: string;
@@ -55,7 +61,7 @@ export interface Database {
   password_tokens: {
     token_hash: string;
     user_id: string;
-    purpose: "invite" | "recovery";
+    purpose: "invite" | "recovery" | "verify";
     created_at: Timestamp;
     expires_at: RequiredTimestamp;
     used_at: NullableTimestamp;

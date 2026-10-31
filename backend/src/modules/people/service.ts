@@ -82,7 +82,12 @@ async function assertOwnProperty(db: Db, businessId: string, propertyId: string)
   if (!property) throw invalid("Choose one of your properties.");
 }
 
-/** Creates the profile and an invited account. Does not reserve a bed. */
+/**
+ * Creates the profile and an invited account. Does not reserve a bed.
+ *
+ * A self-service account with this email and no profile becomes this resident. If its email was
+ * never proven, its password, sessions and Google link end here and only the invitation gets in.
+ */
 export async function createResident(
   ctx: Context,
   actor: { id: string; businessId: string },
@@ -91,23 +96,56 @@ export async function createResident(
 ) {
   await assertOwnProperty(ctx.db, actor.businessId, input.propertyId);
   const email = normalizeEmail(input.email);
-  const userId = randomUUID();
   const residentId = randomUUID();
-  let token: string;
+  let token: string | null;
   try {
     token = await ctx.db.transaction().execute(async (trx) => {
-      await trx
-        .insertInto("users")
-        .values({
-          id: userId,
-          business_id: actor.businessId,
-          role: "resident",
-          name: input.name,
-          email,
-          phone: normalizePhone(input.phone),
-          password_hash: null,
-        })
-        .execute();
+      const existing = await trx
+        .selectFrom("users as u")
+        .leftJoin("resident_profiles as r", "r.user_id", "u.id")
+        .select(["u.id", "u.role", "u.status", "u.email_verified_at", "r.id as resident_id"])
+        .where("u.business_id", "=", actor.businessId)
+        .where("u.email", "=", email)
+        .forUpdate()
+        .executeTakeFirst();
+      if (existing && (existing.role !== "resident" || existing.resident_id || existing.status === "disabled"))
+        throw conflict(DUPLICATE_CONTACT);
+      const userId = existing?.id ?? randomUUID();
+      const proven = Boolean(existing?.email_verified_at);
+      if (existing) {
+        await trx
+          .updateTable("users")
+          .set({
+            name: input.name,
+            phone: normalizePhone(input.phone),
+            ...(proven ? {} : { password_hash: null, status: "invited" as const }),
+            updated_at: dbNow,
+          })
+          .where("id", "=", userId)
+          .execute();
+        if (!proven) {
+          await trx
+            .updateTable("sessions")
+            .set({ revoked_at: dbNow })
+            .where("user_id", "=", userId)
+            .where("revoked_at", "is", null)
+            .execute();
+          await trx.deleteFrom("google_identities").where("user_id", "=", userId).execute();
+        }
+      } else {
+        await trx
+          .insertInto("users")
+          .values({
+            id: userId,
+            business_id: actor.businessId,
+            role: "resident",
+            name: input.name,
+            email,
+            phone: normalizePhone(input.phone),
+            password_hash: null,
+          })
+          .execute();
+      }
       await trx
         .insertInto("resident_profiles")
         .values({
@@ -130,13 +168,13 @@ export async function createResident(
         entityId: residentId,
         requestId,
       });
-      return issuePasswordToken(trx, userId, "invite");
+      return proven ? null : issuePasswordToken(trx, userId, "invite");
     });
   } catch (e) {
     if (isDuplicate(e)) throw conflict(DUPLICATE_CONTACT);
     throw e;
   }
-  deliverPasswordLink(ctx, { email, name: input.name }, "invite", token);
+  if (token) deliverPasswordLink(ctx, { email, name: input.name }, "invite", token);
   return { id: residentId };
 }
 

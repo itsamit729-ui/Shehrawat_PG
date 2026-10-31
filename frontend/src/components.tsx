@@ -210,6 +210,7 @@ export const navs: Record<Role, [string, string, typeof Home][]> = {
     ["agreements", "My documents", FileSignature],
     ["refer", "Refer a friend", Gift],
     ["move-out", "Move out", DoorOpen],
+    ["security", "Security", ShieldCheck],
   ],
   corporate: [
     ["overview", "Overview", LayoutDashboard],
@@ -217,6 +218,7 @@ export const navs: Record<Role, [string, string, typeof Home][]> = {
     ["invoices", "Company invoices", Wallet],
     ["requests", "Housing requests", Building2],
     ["agreements", "Agreements", FileSignature],
+    ["security", "Security", ShieldCheck],
   ],
 };
 export function PortalLayout({ children }: { children: ReactNode }) {

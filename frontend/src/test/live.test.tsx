@@ -211,6 +211,162 @@ describe("owner sign-in without SMS", () => {
   });
 });
 
+describe("creating an account", () => {
+  async function openSignup(url = "/signup") {
+    signedIn = false;
+    window.history.replaceState({}, "", url);
+    render(<App />);
+    await screen.findByRole("heading", { name: "Create your account" });
+  }
+  async function fill(password = "a-long-password", confirm = password) {
+    await userEvent.type(screen.getByLabelText(/name/i), "Asha Rao");
+    await userEvent.type(screen.getByLabelText(/Email/), "asha@example.com");
+    await userEvent.type(screen.getByLabelText(/^Password/), password);
+    await userEvent.type(screen.getByLabelText(/Confirm/), confirm);
+    await userEvent.click(screen.getByRole("button", { name: /Create account/ }));
+  }
+
+  it("creates the account, then asks the person to sign in", async () => {
+    await openSignup();
+    api.overrides["/auth/signup"] = () =>
+      Promise.resolve({ verificationRequired: false, message: "You can sign in now." });
+    await fill();
+    await screen.findByRole("heading", { name: "Your account is ready." });
+    const panel = screen.getByText("You can sign in now.").closest(".success") as HTMLElement;
+    expect(within(panel).getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/login");
+    const signup = api.request.mock.calls.find(([p]) => p === "/auth/signup");
+    expect(signup?.[1].body).toEqual({
+      role: "resident",
+      name: "Asha Rao",
+      email: "asha@example.com",
+      password: "a-long-password",
+    });
+  });
+
+  it("tells the person to check their email when verification is on", async () => {
+    await openSignup();
+    api.overrides["/auth/signup"] = () =>
+      Promise.resolve({ verificationRequired: true, message: "An email will arrive." });
+    await fill();
+    await screen.findByRole("heading", { name: "Check your email." });
+  });
+
+  it("asks a company for its name", async () => {
+    await openSignup("/signup?role=corporate");
+    await userEvent.type(screen.getByLabelText(/Company name/), "Acme");
+    await userEvent.type(screen.getByLabelText(/Your name/), "Rahul");
+    await userEvent.type(screen.getByLabelText(/Email/), "r@acme.example");
+    await userEvent.type(screen.getByLabelText(/^Password/), "a-long-password");
+    await userEvent.type(screen.getByLabelText(/Confirm/), "a-long-password");
+    await userEvent.click(screen.getByRole("button", { name: /Create account/ }));
+    await waitFor(() => expect(calls("/auth/signup")).toBe(1));
+    const signup = api.request.mock.calls.find(([p]) => p === "/auth/signup");
+    expect(signup?.[1].body).toMatchObject({ role: "corporate", companyName: "Acme" });
+  });
+
+  it("stops mismatched passwords before calling the server", async () => {
+    await openSignup();
+    await fill("a-long-password", "another-long-password");
+    await screen.findByText("The passwords do not match.");
+    expect(calls("/auth/signup")).toBe(0);
+  });
+
+  it("is offered to residents and companies, never to the owner", async () => {
+    signedIn = false;
+    window.history.replaceState({}, "", "/login");
+    render(<App />);
+    await screen.findByRole("heading", { name: "Good to see you." });
+    expect(
+      screen.getByRole("link", { name: /Create an account/ }),
+    ).toHaveAttribute("href", "/signup?role=resident");
+    await userEvent.click(screen.getByRole("button", { name: "corporate" }));
+    expect(
+      screen.getByRole("link", { name: /Create an account/ }),
+    ).toHaveAttribute("href", "/signup?role=corporate");
+    await userEvent.click(screen.getByRole("button", { name: "owner" }));
+    expect(screen.queryByRole("link", { name: /Create an account/ })).toBeNull();
+  });
+});
+
+describe("email verification", () => {
+  it("offers a new link when sign-in is blocked for it", async () => {
+    signedIn = false;
+    window.history.replaceState({}, "", "/login");
+    render(<App />);
+    await screen.findByRole("heading", { name: "Good to see you." });
+    api.overrides["/auth/login"] = () =>
+      Promise.reject(new ApiError("Verify your email first.", 403));
+    await userEvent.type(screen.getByLabelText(/Email/), "a@example.com");
+    await userEvent.type(screen.getByLabelText(/Password/), "a-long-password");
+    await userEvent.click(screen.getByRole("button", { name: /Sign in/ }));
+    await screen.findByText("Verify your email first.");
+    expect(
+      screen.getByRole("link", { name: /new verification link/ }),
+    ).toHaveAttribute("href", "/resend-verification");
+  });
+
+  it("uses the link's token only when the person clicks", async () => {
+    signedIn = false;
+    window.history.replaceState({}, "", "/verify-email?token=abc");
+    render(<App />);
+    const button = await screen.findByRole("button", { name: "Verify my email" });
+    expect(calls("/auth/verify-email")).toBe(0);
+    await userEvent.click(button);
+    await screen.findByRole("heading", { name: "Email verified." });
+    const verify = api.request.mock.calls.find(([p]) => p === "/auth/verify-email");
+    expect(verify?.[1].body).toEqual({ token: "abc" });
+  });
+});
+
+describe("Google sign-in", () => {
+  it("appears only when the service has it on, and only for residents", async () => {
+    signedIn = false;
+    api.overrides["/auth/google/enabled"] = () => Promise.resolve({ enabled: true });
+    window.history.replaceState({}, "", "/login");
+    render(<App />);
+    await screen.findByRole("link", { name: "Continue with Google" });
+    await userEvent.click(screen.getByRole("button", { name: "corporate" }));
+    expect(screen.queryByRole("link", { name: "Continue with Google" })).toBeNull();
+  });
+
+  it("stays hidden when the service has it off", async () => {
+    signedIn = false;
+    window.history.replaceState({}, "", "/login");
+    render(<App />);
+    await screen.findByRole("heading", { name: "Good to see you." });
+    await waitFor(() => expect(calls("/auth/google/enabled")).toBeGreaterThan(0));
+    expect(screen.queryByRole("link", { name: "Continue with Google" })).toBeNull();
+  });
+
+  it("explains that an existing account has to connect Google itself", async () => {
+    signedIn = false;
+    window.history.replaceState({}, "", "/login?google_error=existing");
+    render(<App />);
+    await screen.findByText(/This email already has an account/);
+  });
+});
+
+describe("account security", () => {
+  it("changes a resident's password", async () => {
+    api.overrides["/auth/session"] = () =>
+      Promise.resolve({ id: "u2", name: "Asha", role: "resident", csrfToken: "t" });
+    api.overrides["/portal"] = () => Promise.resolve({ residents: [] });
+    window.history.replaceState({}, "", "/resident/security");
+    render(<App />);
+    await screen.findByRole("heading", { name: "Keep your account safe." });
+    await userEvent.type(screen.getByLabelText(/Current password/), "the-old-password");
+    await userEvent.type(screen.getByLabelText(/^New password/), "the-new-password");
+    await userEvent.type(screen.getByLabelText(/Confirm new/), "the-new-password");
+    await userEvent.click(screen.getByRole("button", { name: "Change password" }));
+    await screen.findByText(/Password changed/);
+    const change = api.request.mock.calls.find(([p]) => p === "/auth/change-password");
+    expect(change?.[1].body).toEqual({
+      currentPassword: "the-old-password",
+      password: "the-new-password",
+    });
+  });
+});
+
 describe("old prototype links", () => {
   async function visit(url: string) {
     signedIn = false;

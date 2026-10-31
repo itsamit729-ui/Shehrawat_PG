@@ -42,3 +42,6 @@ services:
       # Stopgap: the owner signs in with a password until SMS is available.
       - key: OWNER_LOGIN
         value: password
+      # Set to true once a real mail provider sends links.
+      - key: REQUIRE_EMAIL_VERIFICATION
+        value: "false"

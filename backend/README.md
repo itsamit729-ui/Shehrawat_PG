@@ -26,6 +26,7 @@ Routes in the contract that aren't built return 404.
 | Exclusion constraint prevents overlapping stays | The blueprint's fallback: every allocation locks its bed rows first | The database itself won't reject an overlap, so all writes to `bed_allocations` must go through `modules/inventory/allocations.ts`. |
 | `POST /holds` takes bed IDs | Takes property, room type and date, per the frontend contract; the server picks the bed | Corporate multi-bed holds will need a separate entry point in stage 4. |
 | Staff accounts with property assignments | Not yet | Needs a new role on the frontend too. |
+| Resident and corporate accounts by invitation only | Self-service signup and Google sign-in as well | See Authentication. |
 
 MySQL details that matter when changing this code:
 
@@ -76,7 +77,13 @@ Built in-house, using no third-party auth service.
 |---|---|
 | Owner sign-in, stopgap | With `OWNER_LOGIN=password`, a generated password with no phone or email. Move back to SMS by setting `otp` here and `VITE_OWNER_LOGIN=otp` on the frontend. |
 | Owner sign-in | 6-digit SMS code, 5-minute expiry, 5 attempts, one send per 60 seconds, daily limits per phone and IP. Stored as a keyed hash. A new code cancels the old one. |
-| Resident and corporate sign-in | Invitation link, then a password of 12+ characters hashed with Argon2id. |
+| Resident and corporate sign-in | Password of 12+ characters hashed with Argon2id, set through an invitation link or at signup. |
+| Self-service signup | Name, email and password, plus a company name for corporate accounts. The answer is the same whether or not the email is taken, and it doesn't sign the person in. A new account sees no records, and a new company is only what the person typed, with no residents linked to it. |
+| Email verification | With `REQUIRE_EMAIL_VERIFICATION` on, the default, sign-in waits for a 30-minute link from `/verify-email`. Only an explicit `false` turns it off. Accepting an invitation or recovery link also proves the email. |
+| Adding a resident who already signed up | A proven email keeps its account and sessions. For an unproven one, the password, sessions and Google link all end, and only the invitation gets back in, so nobody can sign up early with someone else's email and later see their records. |
+| Google sign-in | Residents only, because a company account needs a company name. Off until `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and `API_URL` are set. A matching email never signs in to an existing account: that person connects Google from Security after signing in. |
+| Changing a password | Residents and companies, from Security. Needs the current password, and ends every other session. |
+| Email delivery | `MAIL_PROVIDER=brevo` or `resend`, with its API key and `MAIL_FROM`. |
 | Sessions | Random token in an HttpOnly cookie; only its hash is stored. Owners: 30 minutes idle, 12 hours absolute. Others: 24 hours idle, 7 days absolute. Rotated on login, revoked on logout and password reset. |
 | Cross-site protection | Exact Origin allowlist on every mutation, plus a CSRF token derived from the session. |
 | Enumeration | Unknown phones and emails get the same answers as known ones, and no SMS or email is sent. |

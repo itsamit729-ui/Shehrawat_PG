@@ -16,7 +16,19 @@ const schema = z.object({
   BUSINESS_SLUG: z.string().min(1).default("sehrawat"),
   // "log" prints codes and links to the service logs: a stopgap until real providers exist.
   SMS_PROVIDER: z.enum(["dev", "log"]).default("dev"),
-  MAIL_PROVIDER: z.enum(["dev", "log"]).default("dev"),
+  MAIL_PROVIDER: z.enum(["dev", "log", "brevo", "resend"]).default("dev"),
+  BREVO_API_KEY: z.string().default(""),
+  RESEND_API_KEY: z.string().default(""),
+  MAIL_FROM: z.string().default(""),
+  // Only an explicit false disables this, so a missing or mistyped value stays safe.
+  REQUIRE_EMAIL_VERIFICATION: z
+    .string()
+    .default("true")
+    .transform((v) => v.trim().toLowerCase() !== "false"),
+  // Google sign-in stays off until all three are set. API_URL is this service's public address.
+  GOOGLE_CLIENT_ID: z.string().default(""),
+  GOOGLE_CLIENT_SECRET: z.string().default(""),
+  API_URL: z.string().default(""),
   // "password" is a stopgap until SMS is available. Each mode turns the other one off.
   OWNER_LOGIN: z.enum(["otp", "password"]).default("otp"),
   JOB_RUNNER_ENABLED: z
@@ -43,6 +55,12 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env) {
       throw new Error("The dev SMS and mail providers print secrets and cannot run in production.");
     if (!c.FRONTEND_URL.startsWith("https://")) throw new Error("Production requires an HTTPS FRONTEND_URL.");
   }
+  const mailKey = c.MAIL_PROVIDER === "brevo" ? c.BREVO_API_KEY : c.MAIL_PROVIDER === "resend" ? c.RESEND_API_KEY : "x";
+  if (!mailKey || (["brevo", "resend"].includes(c.MAIL_PROVIDER) && !c.MAIL_FROM))
+    throw new Error(`MAIL_PROVIDER=${c.MAIL_PROVIDER} also needs its API key and MAIL_FROM.`);
+  const apiUrl = c.API_URL.replace(/\/$/, "");
+  const googleOn = Boolean(c.GOOGLE_CLIENT_ID && c.GOOGLE_CLIENT_SECRET && apiUrl);
+  if (production && googleOn && !apiUrl.startsWith("https://")) throw new Error("Production requires an HTTPS API_URL.");
   const frontendOrigins = c.FRONTEND_ORIGINS.split(",").map((o) => o.trim()).filter(Boolean);
   if (frontendOrigins.some((o) => o.includes("*")))
     throw new Error("FRONTEND_ORIGINS must list exact origins.");
@@ -65,6 +83,15 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env) {
       secure: production || c.COOKIE_SAMESITE === "none",
     },
     ownerLogin: c.OWNER_LOGIN,
+    requireEmailVerification: c.REQUIRE_EMAIL_VERIFICATION,
+    mail: { provider: c.MAIL_PROVIDER, apiKey: mailKey, from: c.MAIL_FROM },
+    google: googleOn
+      ? {
+          clientId: c.GOOGLE_CLIENT_ID,
+          clientSecret: c.GOOGLE_CLIENT_SECRET,
+          redirectUri: `${apiUrl}/api/v1/auth/google/callback`,
+        }
+      : null,
     logsAuthSecrets: c.SMS_PROVIDER === "log" || c.MAIL_PROVIDER === "log",
     trustProxyHops: c.TRUST_PROXY_HOPS,
     businessSlug: c.BUSINESS_SLUG,

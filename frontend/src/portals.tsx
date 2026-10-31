@@ -1,4 +1,4 @@
-import { DocumentUpload } from "./account";
+import { AccountSecurity, DocumentUpload } from "./account";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -102,6 +102,7 @@ export function ResidentPortal() {
     Record<string, string>
   >;
   const currentMenu = publishedMenu[String(day)];
+  if (section === "security") return <AccountSecurity />;
   if (section === "complaints") return <Complaints resident />;
   if (section === "agreements")
     return (
@@ -469,6 +470,7 @@ export function CorporatePortal() {
       required: true,
     },
   ];
+  if (section === "security") return <AccountSecurity />;
   if (section === "agreements") return <Agreements scope="corporate" />;
   if (section === "invoices")
     return (

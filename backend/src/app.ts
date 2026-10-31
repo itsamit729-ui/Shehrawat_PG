@@ -9,6 +9,7 @@ import type { Config } from "./config.js";
 import type { Db } from "./db/client.js";
 import { HttpError } from "./http/errors.js";
 import { installRequestPipeline } from "./http/pipeline.js";
+import { googleRoutes } from "./modules/identity/google.js";
 import { identityRoutes } from "./modules/identity/routes.js";
 import type { Context } from "./modules/identity/service.js";
 import { inventoryRoutes } from "./modules/inventory/routes.js";
@@ -37,6 +38,7 @@ export async function buildApp(deps: { config: Config; db: Db; providers?: Provi
     db,
     secret: config.authSecret,
     frontendUrl: config.frontendUrl,
+    requireEmailVerification: config.requireEmailVerification,
     providers: deps.providers ?? createProviders(config),
     log: app.log,
   };
@@ -78,6 +80,7 @@ export async function buildApp(deps: { config: Config; db: Db; providers?: Provi
     async (api) => {
       installRequestPipeline(api, { config, ctx });
       identityRoutes(api, { config, ctx, businessId: business.id });
+      googleRoutes(api, { config, ctx, businessId: business.id });
       inventoryRoutes(api, { ctx, businessId: business.id });
       peopleRoutes(api, { ctx });
     },

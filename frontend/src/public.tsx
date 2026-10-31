@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Link,
+  Navigate,
   useNavigate,
   useLocation,
   useParams,
@@ -37,7 +38,7 @@ import {
   type Field,
 } from "./components";
 import { useApp, usePolling } from "./state";
-import { DEMO, request } from "./api";
+import { ApiError, apiUrl, DEMO, request } from "./api";
 import {
   money,
   minPrice,
@@ -970,6 +971,9 @@ export function LoginPage() {
   const navigate = useNavigate();
   const from = (useLocation().state as { from?: string } | null)?.from;
   const ownerByOtp = import.meta.env.VITE_OWNER_LOGIN !== "password";
+  const [params] = useSearchParams();
+  const googleError = params.get("google_error");
+  const [needsVerification, setNeedsVerification] = useState(false);
   const [role, setRole] = useState<Role>("resident");
   const [challenge, setChallenge] = useState("");
   const [error, setError] = useState("");
@@ -1049,6 +1053,7 @@ export function LoginPage() {
                 e.preventDefault();
                 setBusy(true);
                 setError("");
+                setNeedsVerification(false);
                 const v = Object.fromEntries(
                   new FormData(e.currentTarget),
                 ) as Record<string, string>;
@@ -1063,6 +1068,9 @@ export function LoginPage() {
                   } else await login({ ...v, role, challengeId: challenge });
                 } catch (e) {
                   setError((e as Error).message);
+                  setNeedsVerification(
+                    e instanceof ApiError && e.status === 403,
+                  );
                 } finally {
                   setBusy(false);
                 }
@@ -1113,7 +1121,19 @@ export function LoginPage() {
                       ]
                 }
               />
+              {googleError && !error && (
+                <Alert>
+                  {googleError === "existing"
+                    ? "This email already has an account. Sign in with your password, then connect Google from Security."
+                    : "Google sign-in didn’t work. Please try again."}
+                </Alert>
+              )}
               {error && <Alert>{error}</Alert>}
+              {needsVerification && (
+                <Link className="text-link" to="/resend-verification">
+                  Send a new verification link
+                </Link>
+              )}
               <button className="btn full-width" disabled={busy}>
                 {busy
                   ? "Please wait…"
@@ -1137,11 +1157,204 @@ export function LoginPage() {
               <Link className="text-link" to="/recover">
                 Need help signing in?
               </Link>
+              {role === "resident" && <GoogleButton />}
+              {role !== "owner" && (
+                <Link className="text-link" to={`/signup?role=${role}`}>
+                  New here? Create an account
+                </Link>
+              )}
             </form>
           )}
           <p className="form-note">
             Access is limited to records assigned to your account.
           </p>
+        </Panel>
+      </section>
+    </PublicLayout>
+  );
+}
+function GoogleButton() {
+  const [enabled, setEnabled] = useState(false);
+  useEffect(() => {
+    if (DEMO) return;
+    request<{ enabled: boolean } | null>("/auth/google/enabled")
+      .then((r) => setEnabled(Boolean(r?.enabled)))
+      .catch(() => {
+        /* The password form still works, so a failed check just hides this. */
+      });
+  }, []);
+  if (!enabled) return null;
+  return (
+    <a className="btn secondary full-width" href={apiUrl("/auth/google/start")}>
+      Continue with Google
+    </a>
+  );
+}
+export function SignupPage() {
+  const { session } = useApp();
+  const [params] = useSearchParams();
+  const [role, setRole] = useState<"resident" | "corporate">(
+    params.get("role") === "corporate" ? "corporate" : "resident",
+  );
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState<{
+    verificationRequired: boolean;
+    message: string;
+  } | null>(null);
+  if (DEMO) return <Navigate to="/login" replace />;
+  if (session)
+    return (
+      <Navigate
+        to={`/${session.role}/${session.role === "resident" ? "home" : "overview"}`}
+        replace
+      />
+    );
+  if (done)
+    return (
+      <PublicLayout>
+        <section className="container section narrow">
+          <Panel>
+            <div className="success">
+              <Check size={32} />
+              <h3>
+                {done.verificationRequired
+                  ? "Check your email."
+                  : "Your account is ready."}
+              </h3>
+              <p>{done.message}</p>
+              <Link className="btn" to="/login">
+                Sign in
+              </Link>
+            </div>
+          </Panel>
+        </section>
+      </PublicLayout>
+    );
+  return (
+    <PublicLayout>
+      <section className="container section narrow">
+        <Panel
+          title="Create your account"
+          description="Your stay or company details will appear once our team links them to this account."
+        >
+          <div className="segmented">
+            {(["resident", "corporate"] as const).map((r) => (
+              <button
+                className={role === r ? "active" : ""}
+                key={r}
+                onClick={() => {
+                  setRole(r);
+                  setError("");
+                }}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setBusy(true);
+              setError("");
+              const { confirm, ...v } = Object.fromEntries(
+                new FormData(e.currentTarget),
+              ) as Record<string, string>;
+              try {
+                if (v.password.length < 12)
+                  throw new Error("Use at least 12 characters.");
+                if (v.password !== confirm)
+                  throw new Error("The passwords do not match.");
+                setDone(
+                  await request("/auth/signup", {
+                    method: "POST",
+                    body: { ...v, role },
+                  }),
+                );
+              } catch (e) {
+                setError((e as Error).message);
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            <Fields
+              fields={[
+                ...(role === "corporate"
+                  ? [
+                      {
+                        name: "companyName",
+                        label: "Company name",
+                        required: true,
+                      },
+                    ]
+                  : []),
+                {
+                  name: "name",
+                  label: role === "corporate" ? "Your name" : "Full name",
+                  required: true,
+                },
+                {
+                  name: "email",
+                  label: "Email address",
+                  type: "email",
+                  required: true,
+                },
+                {
+                  name: "password",
+                  label: "Password (12+ characters)",
+                  type: "password",
+                  required: true,
+                },
+                {
+                  name: "confirm",
+                  label: "Confirm password",
+                  type: "password",
+                  required: true,
+                },
+              ]}
+            />
+            {error && <Alert>{error}</Alert>}
+            <button className="btn full-width" disabled={busy}>
+              {busy ? "Please wait…" : "Create account"}
+              <ArrowRight size={16} />
+            </button>
+            {role === "resident" && <GoogleButton />}
+            <Link className="text-link" to="/login">
+              Already have an account? Sign in
+            </Link>
+          </form>
+        </Panel>
+      </section>
+    </PublicLayout>
+  );
+}
+export function ResendVerificationPage() {
+  return (
+    <PublicLayout>
+      <section className="container section narrow">
+        <Panel
+          title="Verify your email"
+          description="Enter your email to request a new verification link."
+        >
+          <SubmitForm
+            fields={[
+              {
+                name: "email",
+                label: "Email address",
+                type: "email",
+                required: true,
+              },
+            ]}
+            submit="Send link"
+            success="If this account is eligible, an email will arrive shortly."
+            onSubmit={async (v) => {
+              await request("/auth/resend-verification", {
+                method: "POST",
+                body: v,
+              });
+            }}
+          />
         </Panel>
       </section>
     </PublicLayout>

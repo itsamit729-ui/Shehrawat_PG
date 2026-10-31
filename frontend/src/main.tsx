@@ -17,6 +17,8 @@ import {
   PropertyPage,
   BookingPage,
   LoginPage,
+  SignupPage,
+  ResendVerificationPage,
   RecoveryPage,
   InfoPage,
   NotFound,
@@ -24,7 +26,7 @@ import {
 import type { Role } from "./domain";
 import "./styles.css";
 import "./premium.css";
-import { PaymentStatus, SetPassword } from "./account";
+import { PaymentStatus, SetPassword, VerifyEmail } from "./account";
 const Owner = lazy(() =>
   import("./portals").then((m) => ({ default: m.OwnerPortal })),
 );
@@ -145,8 +147,14 @@ export function App() {
             <Route path="/properties/:id" element={<PropertyPage />} />
             <Route path="/book/:id" element={<BookingPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
             <Route path="/recover" element={<RecoveryPage />} />
             <Route path="/set-password" element={<SetPassword />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route
+              path="/resend-verification"
+              element={<ResendVerificationPage />}
+            />
             <Route path="/payment/status" element={<PaymentStatus />} />
             {(
               ["corporate", "partner", "about", "safety", "legal"] as const

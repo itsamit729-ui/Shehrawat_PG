@@ -1,6 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { loadConfig } from "../src/config.js";
 import { migrationChecksum } from "../src/db/migrate.js";
+import { createProviders } from "../src/providers/index.js";
 import { HttpError } from "../src/http/errors.js";
 import {
   csrfTokenFor,
@@ -99,6 +100,46 @@ describe("idempotency keys", () => {
     );
     expect(() => requireIdempotencyKey("abc")).toThrow(HttpError);
     expect(() => requireIdempotencyKey(undefined)).toThrow(HttpError);
+  });
+});
+
+describe("account settings", () => {
+  it("requires email verification unless explicitly turned off", () => {
+    expect(loadConfig(baseEnv).requireEmailVerification).toBe(true);
+    expect(loadConfig({ ...baseEnv, REQUIRE_EMAIL_VERIFICATION: "flase" }).requireEmailVerification).toBe(true);
+    expect(loadConfig({ ...baseEnv, REQUIRE_EMAIL_VERIFICATION: "False" }).requireEmailVerification).toBe(false);
+  });
+  it("needs a key and sender for a real mail provider", () => {
+    expect(() => loadConfig({ ...baseEnv, MAIL_PROVIDER: "brevo" })).toThrow(/MAIL_FROM/);
+    expect(() => loadConfig({ ...baseEnv, MAIL_PROVIDER: "resend", RESEND_API_KEY: "k" })).toThrow(/MAIL_FROM/);
+    expect(loadConfig({ ...baseEnv, MAIL_PROVIDER: "brevo", BREVO_API_KEY: "k", MAIL_FROM: "a@b.c" }).mail.apiKey).toBe("k");
+  });
+  it("leaves Google off until it is fully configured", () => {
+    expect(loadConfig({ ...baseEnv, GOOGLE_CLIENT_ID: "id" }).google).toBeNull();
+    const on = { ...baseEnv, GOOGLE_CLIENT_ID: "id", GOOGLE_CLIENT_SECRET: "s", API_URL: "https://api.example.com/" };
+    expect(loadConfig(on).google?.redirectUri).toBe("https://api.example.com/api/v1/auth/google/callback");
+  });
+});
+
+describe("mail providers", () => {
+  const brevo = loadConfig({ ...baseEnv, MAIL_PROVIDER: "brevo", BREVO_API_KEY: "key", MAIL_FROM: "a@b.c" });
+  const message = { to: "x@example.com", name: "X", purpose: "verify" as const, url: "https://a.example/v?a=1&b=2" };
+  it("sends the link through the provider with its key", async () => {
+    const fetchMock = vi.fn(async () => new Response("{}", { status: 201 }));
+    vi.stubGlobal("fetch", fetchMock);
+    await createProviders(brevo).mail.sendPasswordLink(message);
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe("https://api.brevo.com/v3/smtp/email");
+    expect((init.headers as Record<string, string>)["api-key"]).toBe("key");
+    expect(String(init.body)).toContain("https://a.example/v?a=1&#38;b=2");
+    vi.unstubAllGlobals();
+  });
+  it("fails without repeating the provider's response", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("secret link", { status: 400 })));
+    const error = await createProviders(brevo).mail.sendPasswordLink(message).catch((e: Error) => e);
+    expect(String(error)).not.toContain("secret link");
+    expect((error as { code?: string }).code).toBe("400");
+    vi.unstubAllGlobals();
   });
 });
 
