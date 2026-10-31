@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Owner dashboard · Aangan Living</title>
-<meta name="description" content="Owner dashboard for Aangan Living: occupancy, residents, rent collection, automated reminders, complaints and leads across all PGs.">
+<title>Owner dashboard · Shehrawat PG</title>
+<meta name="description" content="Owner dashboard for Shehrawat PG: occupancy, residents, rent collection, automated reminders, complaints and leads across all PGs.">
 <meta name="robots" content="noindex">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f4d3a'/%3E%3Cpath d='M8 15l8-7 8 7v9h-5v-6h-6v6H8z' fill='white'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="brand-mark.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-/* Aangan Living — shared design system
+/* Shehrawat PG — shared design system
    Font: Manrope. Icons: Phosphor. Spacing & radius follow a fixed scale. */
 
 :root {
@@ -602,7 +602,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; line-height
 <a class="skip-link" href="#content">Skip to content</a>
 <div class="shell">
   <aside class="sb" id="sb" aria-label="Dashboard menu">
-    <a href="index.html" class="logo"><span class="logo-mark"><i class="ph-fill ph-house-line"></i></span>Aangan<small style="color:#9b9b9b">Owner</small></a>
+    <a href="index.html" class="logo"><span class="logo-mark"><img src="brand-mark.svg" width="36" height="36" alt=""></span><span class="logo-wordmark">Shehrawat <b>PG</b><small>OWNER WORKSPACE</small></span></a>
     <nav>
       <button class="active" data-v="overview"><i class="ph ph-squares-four"></i>Overview</button>
       <button data-v="residents"><i class="ph ph-users"></i>Residents</button>
@@ -819,9 +819,9 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; line-height
 </div>
 
 <script>
-// Demo data for Aangan Living. Everything here is sample data for the client preview.
+// Demo data for Shehrawat PG. Everything here is sample data for the client preview.
 window.AANGAN = {
-  brand: "Aangan Living",
+  brand: "Shehrawat PG",
   phone: "+91 98734 21586",
   whatsapp: "919873421586",
   email: "hello@aanganliving.in",
@@ -916,7 +916,7 @@ window.minPrice = (p) => Math.min(...Object.values(p.rooms).map((r) => r.price))
       <a class="skip-link" href="#main">Skip to content</a>
       <header class="site-header">
         <nav class="island" aria-label="Main">
-          <a href="index.html" class="logo"${cur("home")}><span class="logo-mark"><i class="ph-fill ph-house-line"></i></span>Aangan<small>Living</small></a>
+          <a href="index.html" class="logo"${cur("home")}><span class="logo-mark"><img src="brand-mark.svg" width="36" height="36" alt=""></span><span class="logo-wordmark">Shehrawat <b>PG</b><small>CO-LIVING &amp; RESIDENCES</small></span></a>
           <ul class="nav-links">${NAV.map(([k, h, t]) => `<li><a href="${h}"${cur(k)}>${t}</a></li>`).join("")}</ul>
           <div class="nav-cta">
             <a href="owner-dashboard.html" class="btn btn-ghost btn-sm hide-m"><i class="ph ph-chart-pie-slice"></i>Owner login</a>
@@ -947,7 +947,7 @@ window.minPrice = (p) => Math.min(...Object.values(p.rooms).map((r) => r.price))
         <div class="container">
           <div class="cols">
             <div>
-              <a href="index.html" class="logo"><span class="logo-mark"><i class="ph-fill ph-house-line"></i></span>Aangan<small style="color:#9b9b9b">Living</small></a>
+              <a href="index.html" class="logo"><span class="logo-mark"><img src="brand-mark.svg" width="36" height="36" alt=""></span><span class="logo-wordmark">Shehrawat <b>PG</b><small>CO-LIVING &amp; RESIDENCES</small></span></a>
               <p class="small mt-16" style="max-width:320px">Managed PGs and coliving homes across Gurugram. One brand, one standard, one app for everything.</p>
               <div class="socials">
                 <a href="https://instagram.com" aria-label="Instagram"><i class="ph ph-instagram-logo"></i></a>
@@ -981,7 +981,7 @@ window.minPrice = (p) => Math.min(...Object.values(p.rooms).map((r) => r.price))
             </ul></div>
           </div>
           <div class="bottom">
-            <span>© 2026 Aangan Living Pvt Ltd. Demo website for client review.</span>
+            <span>© 2026 Shehrawat PG Pvt Ltd. Demo website for client review.</span>
             <span class="flex gap-16"><a href="legal.html#privacy">Privacy policy</a><a href="legal.html#terms">Terms</a><a href="legal.html#refund">Refund policy</a></span>
           </div>
         </div>
@@ -1338,8 +1338,8 @@ window.openReminder = (list) => {
   remTargets = list.filter(Boolean);
   const r = remTargets[0];
   document.getElementById("rm-sub").textContent = remTargets.length === 1 ? `To ${r.name} · ${r.propName} ${r.room}${r.bed}` : `To ${remTargets.length} residents`;
-  document.getElementById("rm-head").innerHTML = `<b>From:</b> Aangan Living &lt;rent@aanganliving.in&gt;<br><b>Subject:</b> Rent reminder: ${inr(due(r) || r.rent)} due for October`;
-  document.getElementById("rm-body").innerHTML = `Hi ${r.first},\n\nThis is a friendly reminder that your October rent of <b>${inr(due(r) || r.rent)}</b> for ${r.propName}, Room ${r.room}${r.bed} is pending.${r.lateFee ? `\nA late fee of ${inr(r.lateFee)} has been added as per your agreement.` : ""}\n\nPay in one tap with UPI, card or net banking.\n<span class="pay">Pay ${inr(due(r) || r.rent)} now</span>\n\nAlready paid? Reply to this message with your UTR number.\n\nTeam Aangan Living`;
+  document.getElementById("rm-head").innerHTML = `<b>From:</b> Shehrawat PG &lt;rent@aanganliving.in&gt;<br><b>Subject:</b> Rent reminder: ${inr(due(r) || r.rent)} due for October`;
+  document.getElementById("rm-body").innerHTML = `Hi ${r.first},\n\nThis is a friendly reminder that your October rent of <b>${inr(due(r) || r.rent)}</b> for ${r.propName}, Room ${r.room}${r.bed} is pending.${r.lateFee ? `\nA late fee of ${inr(r.lateFee)} has been added as per your agreement.` : ""}\n\nPay in one tap with UPI, card or net banking.\n<span class="pay">Pay ${inr(due(r) || r.rent)} now</span>\n\nAlready paid? Reply to this message with your UTR number.\n\nTeam Shehrawat PG`;
   openModal("rem-modal");
 };
 document.getElementById("rm-send").addEventListener("click", function () {
@@ -1410,9 +1410,9 @@ function renderRent() {
 
 /* ================= Automations ================= */
 const TRIG = [
-  ["ph-bell-ringing", "Rent reminder", "3 days before rent is due", ["Email", "WhatsApp"], true, 472, "Your rent is due on {{due_date}}", "Hi {{first_name}},\n\nYour rent of {{amount}} for {{property}}, Room {{room}} is due on {{due_date}}.\n\nPay in one tap: {{pay_link}}\n\nSet up UPI autopay and never think about it again.\n\nTeam Aangan Living"],
+  ["ph-bell-ringing", "Rent reminder", "3 days before rent is due", ["Email", "WhatsApp"], true, 472, "Your rent is due on {{due_date}}", "Hi {{first_name}},\n\nYour rent of {{amount}} for {{property}}, Room {{room}} is due on {{due_date}}.\n\nPay in one tap: {{pay_link}}\n\nSet up UPI autopay and never think about it again.\n\nTeam Shehrawat PG"],
   ["ph-calendar-check", "Rent due today", "On the due date, 9 AM", ["WhatsApp", "SMS"], true, 118, "Rent due today", "Hi {{first_name}}, your rent of {{amount}} is due today. Pay now: {{pay_link}}"],
-  ["ph-warning-circle", "Overdue notice", "3 days after due date, repeats every 3 days", ["Email", "WhatsApp"], true, 96, "Your rent is overdue", "Hi {{first_name}},\n\nYour rent of {{amount}} for {{property}} is now overdue. A late fee of ₹100 per day applies from tomorrow.\n\nPay now: {{pay_link}}\n\nIf you are facing a problem, reply and our team will help.\n\nTeam Aangan Living"],
+  ["ph-warning-circle", "Overdue notice", "3 days after due date, repeats every 3 days", ["Email", "WhatsApp"], true, 96, "Your rent is overdue", "Hi {{first_name}},\n\nYour rent of {{amount}} for {{property}} is now overdue. A late fee of ₹100 per day applies from tomorrow.\n\nPay now: {{pay_link}}\n\nIf you are facing a problem, reply and our team will help.\n\nTeam Shehrawat PG"],
   ["ph-timer", "Late fee applied", "4 days after due date", ["Email"], true, 41, "Late fee added to your account", "Hi {{first_name}}, a late fee has been added to your rent for {{property}}. Current due: {{amount}}. Pay: {{pay_link}}"],
   ["ph-receipt", "Payment receipt", "Instantly after a payment", ["Email", "WhatsApp"], true, 431, "Receipt for {{amount}}", "Hi {{first_name}}, we received {{amount}} for {{property}}, Room {{room}}. Your receipt is attached. Thank you."],
   ["ph-hand-waving", "Welcome on booking", "When a bed is booked", ["Email", "WhatsApp"], true, 58, "Welcome to {{property}}", "Hi {{first_name}}, welcome to {{property}}. Your property manager is Raju Yadav (+91 98110 46273). Move in checklist: {{pay_link}}"],
