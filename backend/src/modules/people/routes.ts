@@ -87,8 +87,8 @@ export function peopleRoutes(app: FastifyInstance, opts: { ctx: Context }) {
       };
     }
     if (user.role === "resident") {
+      if (!user.residentId) return { residents: [] };
       const safe = residentSafeSettings(await getSettings(db, businessId));
-      if (!user.residentId) return { settings: safe };
       const scope = { residentId: user.residentId };
       return {
         residents: await listResidentById(db, businessId, user.residentId),
@@ -99,7 +99,7 @@ export function peopleRoutes(app: FastifyInstance, opts: { ctx: Context }) {
         settings: safe,
       };
     }
-    if (!user.corporateId) return {};
+    if (!user.corporateId) return { residents: [] };
     const scope = { corporateId: user.corporateId };
     return {
       residents: await listCorporateResidents(db, businessId, user.corporateId),
